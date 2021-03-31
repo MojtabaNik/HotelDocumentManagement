@@ -1,0 +1,178 @@
+﻿@using Archive.ViewModel;
+@model AddTemplateViewModel
+
+@{
+    ViewBag.Title = "افزودن قالب جدید";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.rtl.min.css" rel="stylesheet" />
+}
+
+@section HeadCss{
+    <style>
+        .preViewImage {
+            display: block;
+            border: 1px solid black;
+            width: 100%;
+        }
+    </style>
+}
+
+<form action="~/Template/Add" method="post" enctype="multipart/form-data">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="input-group fg-float">
+                    <span class="input-group-addon"><i class="zmdi zmdi-label"></i></span>
+                    <div class="fg-line">
+                        <input id="templateName" name="template.File.Name" type="text" class="form-control">
+                        <label class="fg-label">نام قالب</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="fileinput fileinput-new" data-provides="fileinput">
+                    <span class="btn btn-primary btn-file m-r-10 waves-effect">
+                        <span class="fileinput-new">انتخاب فایل قالب</span>
+                        <span class="fileinput-exists">تغییر</span>
+                        <input type="hidden" value="" name="..."><input id="file" type="file" name="fileUpload">
+                    </span>
+                    <span class="fileinput-filename"></span>
+                    <a href="#" class="close fileinput-exists" data-dismiss="fileinput">×</a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-10">
+                <img class="preViewImage" src="" />
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-lg-4">
+
+            </div>
+            <div class="col-lg-6">
+                <div class="col-sm-3">
+                    <button id="PreView" type="button" class="btn bgm-red btn-lg waves-effect">پیش نمایش</button>
+                </div>
+                <div class="col-sm-3">
+                    <button id="sendForm" disabled="disabled" type="submit" class="btn bgm-red btn-lg waves-effect">ذخیره</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts{
+
+
+    @*<script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+        <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>*@
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+
+
+
+}
+
+@section OurScripts{
+    <script>
+        $(function () {
+            document.getElementById('PreView').onclick = function () {
+                var formdata = new FormData(); //FormData object
+                var fileInput = document.getElementById('file');
+                //Check if input file is not Empty
+                if (fileInput.files.length == 0) {
+                    alert("لطفا فایل قالب را انتخاب نمایید.");
+                    return false;
+                }
+
+
+
+                if (fileInput.files[0].name.split('.')[1] != 'docx') {
+                    alert("فرمت فایل اتخاب شده باید ورد باشد.");
+                    return false;
+                }
+
+
+
+                //Iterating through each files selected in fileInput
+                for (i = 0; i < fileInput.files.length; i++) {
+                    //Appending each file to FormData object
+                    formdata.append(fileInput.files[i].name, fileInput.files[i]);
+                }
+                //Creating an XMLHttpRequest and sending
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/Template/PreView');
+                xhr.send(formdata);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        $(".preViewImage").attr("src", xhr.responseText);
+                        $("#sendForm").removeAttr("disabled");
+                        $("#PreView").attr("disabled", "disabled");
+                        //console.log(xhr.responseText);
+                        //alert("end");
+                    }
+                }
+                return false;
+            }
+
+            $("#file").change(function () {
+                if ($("#PreView").attr("disabled") == "disabled") {
+                    $("#PreView").removeAttr("disabled");
+                    $("#sendForm").attr("disabled", "disabled");
+                }
+            });
+
+
+            $("#sendForm").click(function () {
+                if ($("#templateName").val().trim() == '') {
+                    alert("لطفا نام قالب را انتخاب نمایید.");
+                    return false;
+                }
+
+                if ($("#file").val() == '') {
+                    alert("لطفا فایل قالب را انتخاب نمایید.");
+                    return false;
+                }
+
+            });
+
+
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+
+                <text>
+            $(function () {
+                alert("@ViewData.ModelState["error"].Errors[0].ErrorMessage");
+            });
+            </text>
+
+        }
+
+        });
+    </script>
+}

@@ -1,0 +1,222 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9"><![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Archive Program Login</title>
+    <!-- Vendor CSS -->
+    @Styles.Render("~/Content/vendors/bower_components")
+
+
+    <!-- CSS -->
+    @Styles.Render("~/Content/css")
+    <style>
+        body {
+            font-family: IRANSans;
+        }
+    </style>
+
+</head>
+
+<body class="login-content">
+    <!-- Login -->
+    <div class="lc-block toggled" id="l-login">
+        <form action="~/Login" method="post">
+            <div class="input-group m-b-20">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="UserName" type="text" class="form-control" placeholder="نام کاربری">
+                </div>
+            </div>
+
+            <div class="input-group m-b-20">
+                <span class="input-group-addon"><i class="zmdi zmdi-male"></i></span>
+                <div class="fg-line">
+                    <input name="password" type="password" class="form-control" placeholder="کلمه عبور">
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" value="">
+                    <i class="input-helper"></i>
+                    مرا به خاطر بسپار
+                </label>
+            </div>
+
+            <button id="Login" type="submit" href="" class="btn btn-login btn-danger btn-float"><i class="zmdi zmdi-arrow-left"></i></button>
+
+            <ul class="login-navigation">
+                @*<li data-block="#l-register" class="bgm-red">ثبت نام</li>*@
+                <li data-block="#l-forget-password" class="bgm-orange">فراموشی کلمه عبور</li>
+            </ul>
+        </form>
+    </div>
+
+    <!-- Register -->
+    @*<div class="lc-block" id="l-register">
+        <div class="input-group m-b-20">
+            <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+            <div class="fg-line">
+                <input type="text" class="form-control" placeholder="نام کاربری">
+            </div>
+        </div>
+
+        <div class="input-group m-b-20">
+            <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
+            <div class="fg-line">
+                <input type="text" class="form-control" placeholder="آدرس ایمیل">
+            </div>
+        </div>
+
+        <div class="input-group m-b-20">
+            <span class="input-group-addon"><i class="zmdi zmdi-male"></i></span>
+            <div class="fg-line">
+                <input type="password" class="form-control" placeholder="کلمه عبور">
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="">
+                <i class="input-helper"></i>
+                قوانین را می پذیرم
+            </label>
+        </div>
+
+        <a href="" class="btn btn-login btn-danger btn-float"><i class="zmdi zmdi-arrow-left"></i></a>
+
+        <ul class="login-navigation">
+            <li data-block="#l-login" class="bgm-green">ورود</li>
+            <li data-block="#l-forget-password" class="bgm-orange">فراموشی کلمه عبور</li>
+        </ul>
+    </div>*@
+
+    <!-- Forgot Password -->
+    <div class="lc-block" id="l-forget-password">
+        <p class="text-right">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
+
+        <div class="input-group m-b-20">
+            <span class="input-group-addon"><i class="zmdi zmdi-email"></i></span>
+            <div class="fg-line">
+                <input type="text" class="form-control" placeholder="آدرس ایمیل">
+            </div>
+        </div>
+
+        <a href="" class="btn btn-login btn-danger btn-float"><i class="zmdi zmdi-arrow-left"></i></a>
+
+        <ul class="login-navigation">
+            <li data-block="#l-login" class="bgm-green">ورود</li>
+            @*<li data-block="#l-register" class="bgm-red">ثبت نام</li>*@
+        </ul>
+    </div>
+
+    <!-- Older IE warning message -->
+    <!--[if lt IE 9]>
+        <div class="ie-warning">
+            <h1 class="c-white">Warning!!</h1>
+            <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
+            <div class="iew-container">
+                <ul class="iew-download">
+                    <li>
+                        <a href="http://www.google.com/chrome/">
+                            <img src="img/browsers/chrome.png" alt="">
+                            <div>Chrome</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.mozilla.org/en-US/firefox/new/">
+                            <img src="img/browsers/firefox.png" alt="">
+                            <div>Firefox</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://www.opera.com">
+                            <img src="img/browsers/opera.png" alt="">
+                            <div>Opera</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.apple.com/safari/">
+                            <img src="img/browsers/safari.png" alt="">
+                            <div>Safari</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                            <img src="img/browsers/ie.png" alt="">
+                            <div>IE (New)</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <p>Sorry for the inconvenience!</p>
+        </div>
+    <![endif]-->
+    <!-- Javascript Libraries -->
+    <script src="@Url.Content("~/vendors/bower_components/jquery/dist/jquery.min.js")"></script>
+    <script src="@Url.Content("~/vendors/bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
+  
+    <script src="@Url.Content("~/vendors/bower_components/Waves/dist/waves.min.js")"></script>
+
+    <script src="@Url.Content("~/js/functions.js")"></script>
+
+    <!-- Placeholder for IE9 -->
+    <!--[if IE 9 ]>
+        <script src="vendors/bower_components/jquery-placeholder/jquery.placeholder.min.js"></script>
+    <![endif]-->
+
+
+
+    <script>
+        @if (!ViewData.ModelState.IsValid)
+        {
+
+              <text>
+        $(function () {
+            alert("@ViewData.ModelState["error"].Errors[0].ErrorMessage");
+        });
+        @*$(function () {
+            $.growl({
+
+            message: "@ViewData.ModelState["error"].Errors[0].ErrorMessage"
+            },{
+                type: "danger",
+                allow_dismiss: false,
+                label: 'Cancel',
+                className: 'btn-xs btn-inverse',
+                placement: {
+                    from: 'top',
+                    align: 'right'
+                },
+                delay: 2500,
+                animate: {
+                    enter: 'animated bounceIn',
+                    exit: 'animated bounceOut'
+                },
+                offset: {
+                    x: 20,
+                    y: 85
+                }
+            });
+        });*@
+
+
+
+
+        </text>
+
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+﻿using DataAccessLayer;
+using DBProvider;
+using EntityModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+
+namespace BusinessModel
+{
+    public class ReceiveLetterManager:DBProvider<ReceivedLetter>
+    {
+        public ReceiveLetterManager():base(new DatabaseContext())
+        {
+        }
+        public void AddCases(ReceivedLetter receivedLetter, string selectedCasesGuidlist)
+        {
+            List<Guid> ListGuid = new List<Guid>();
+            List<string> GUIDS = new List<string>();
+
+            if (selectedCasesGuidlist.Contains(","))
+            {
+                GUIDS = selectedCasesGuidlist.Split(',').ToList();
+            }
+            else
+            {
+                GUIDS.Add(selectedCasesGuidlist);
+            }
+
+            foreach (var item in GUIDS)
+            {
+                Guid id = Guid.Parse(item);
+                ListGuid.Add(id);
+            }
+            receivedLetter.Cases = new List<Case>();
+            var caseDbset = DBC.Set<Case>();
+            foreach (var item in ListGuid)
+            {
+                receivedLetter.Cases.Add(caseDbset.FirstOrDefault(x => x.Id == item));
+            }
+        }
+        public void AddOrganization(ReceivedLetter receivedLetter, Guid? selectedOrganization)
+        {
+            var orgDBset = DBC.Set<Organization>();
+            receivedLetter.Organization = orgDBset.FirstOrDefault(x => x.Id == selectedOrganization);
+        }
+
+        public void AddPerson(ReceivedLetter receivedLetter, Guid? selectedPerson)
+        {
+            var perDBset = DBC.Set<Person>();
+            receivedLetter.Person = perDBset.FirstOrDefault(x => x.Id == selectedPerson);
+        }
+        public void AddUser(ReceivedLetter receivedLetter, Guid selectedUser)
+        {
+            var userDBset = DBC.Set<User>();
+            receivedLetter.User = userDBset.FirstOrDefault(x => x.Id == selectedUser);
+        }
+        public ReceivedLetter GetParent(Guid child)
+        {
+            var parent =
+                DBC.Database.SqlQuery<Guid>("SELECT ParentReceiveLetter_Id from ReceivedLetters where Id={0}", child)
+                    .FirstOrDefault<Guid>();
+
+            return Read(parent);
+        }
+
+
+        public void UpdateReceiveLetterFiles(ReceivedLetter parentReceiveletter, List<HttpPostedFileBase> fileUploadLetters)
+        {
+            List<ReceiveLetterFile> receiveLetterfiles = new List<ReceiveLetterFile>();
+           // parentReceiveletter.ReceiveLetterFiles.Clear();
+            receiveLetterfiles = DBC.Set<ReceiveLetterFile>().Where(x => x.ReceiveLetter.Id == parentReceiveletter.Id).ToList();
+
+                parentReceiveletter.ReceiveLetterFiles = new List<ReceiveLetterFile>();//
+                
+                foreach (var item in fileUploadLetters)
+                {
+                    int i = 0;
+                    if (item != null && item.ContentLength > 0)
+                    {
+                        var target = new MemoryStream();
+                        ReceiveLetterFile receiveLetterFile = new ReceiveLetterFile();
+                        item.InputStream.CopyTo(target);
+                        receiveLetterFile.File = new ArchiveFile
+                        {
+                            Content = target.ToArray(),
+                            Name = item.FileName,
+                            ContentType = item.ContentType
+                        };
+                        receiveLetterfiles.Add(receiveLetterFile);
+                    }
+                    //else if (deleted[i])
+                    //{
+                    //    receiveLetterfiles.RemoveAt(i);
+                    //}
+                    //else
+                    //{
+                    //    //editIncomingLettersViewModel.receivedLetter.ReceiveLetterFiles.Add(ImageFromBase64(editIncomingLettersViewModel.OlderFiles[i]));
+                    //    ReceiveLetterFile receiveLetterFile = new ReceiveLetterFile();
+                    //    receiveLetterFile.File = new ArchiveFile
+                    //    {
+                    //        Content = ImageFromBase64(editIncomingLettersViewModel.OlderFilesContent[i]),
+                    //        Name = editIncomingLettersViewModel.OlderFilesName[i],
+                    //        ContentType = "image/jpg"
+                    //    };
+                    //    editIncomingLettersViewModel.receivedLetter.ReceiveLetterFiles.Add(receiveLetterFile);
+                    //}
+                    i++;
+                }
+        }
+    }
+}

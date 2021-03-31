@@ -1,0 +1,325 @@
+﻿@using Archive.ViewModel;
+@using DBProvider
+@model DepartementViewModel
+
+@{
+    ViewBag.Title = "ویرایش ‍‍واحد";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+
+
+}
+@section HeadCss{
+    <link href="~/css/KendoUI/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.rtl.min.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.default.min.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.default.min.css" rel="stylesheet"/>
+
+    <style>
+        .fileinput .thumbnail {
+            right: -40px;
+        }
+    </style>
+    <style>
+        g {
+            cursor: pointer;
+        }
+
+        .node circle {
+            fill: #fff !important;
+            stroke: steelblue;
+            stroke-width: 3px;
+        }
+
+        g text {
+            font: 25px IRANSans !important;
+            display: block;
+            margin: 0 auto;
+            /*direction: ltr;*/
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+        }
+
+        html {
+            overflow-x: hidden;
+        }
+    </style>
+
+    <link href="~/Content/getorgchart.css" rel="stylesheet" />
+}
+
+
+<form action="~/Department/Edit" method="post">
+    @*@Html.AntiForgeryToken()*@
+    <input name="DepartmentID" type="hidden" value="@Model.SelectedDepartment.Id" />
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input id="DepartmentName" name="Name" type="text" class="form-control" value="@Model.SelectedDepartment.Name">
+                    <label class="fg-label">نام سازمان </label>
+                </div>
+            </div>
+        </div>
+        @*<div class="col-sm-4">
+                <div class="input-group fg-float">
+                    <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                    <div class="fg-line">
+                        <input name="ParentName" type="text" class="form-control">
+                        <label class="fg-label">نام سازمان والد </label>
+                    </div>
+                </div>
+            </div>*@
+        @*<div class="col-xs-4">
+            <select name="ParentDepartmentGUID" class="selectpicker" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سازمانی یافت نشد">
+                @foreach (var Department in Model.Departements)
+                {
+                    if (Department.Id == Model.SelectedDepartmentParent.Id)
+                    {
+                        <option selected="selected" value="@Department.Id">@Department.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@Department.Id">@Department.Name</option>
+                    }
+
+                }
+            </select>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"></span>
+                <div class="fg-line">
+
+                    <button type="submit" class="btn bgm-red btn-lg waves-effect">ویرایش</button>
+                </div>
+            </div>
+        </div>*@
+    </div>
+    <div class="row">
+        <div class="col-xs-12 tree-view-box">
+            <div class="demo-section k-content">
+                <div>
+
+                    <div id="treeview2"></div>
+                    <input id="ParentDepartmentGUID" name="ParentDepartmentGUID" type="hidden" value="@Model.DepartmentString" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="row ">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4 center-block">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"></span>
+                <div class="fg-line">
+
+                    <button id="sendForm" type="submit" class="btn bgm-red btn-lg waves-effect">ویرایش</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <hr class="hr-color" />
+    <br />
+</form>
+
+@section Scripts{
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+    <script src="~/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+
+}
+
+@section OurScripts{
+    <script src="~/js/kendo.all.min.js"></script>
+    <script>
+        $(function() {
+
+            //Handle Tree View
+
+            // function that gathers IDs of checked nodes- this function is shared between all tree views
+            function checkedNodeIds(nodes, checkedNodes) {
+                for (var i = 0; i < nodes.length; i++) {
+                    if (nodes[i].checked) {
+                        checkedNodes.push(nodes[i].id);
+                    }
+
+                    if (nodes[i].hasChildren) {
+                        checkedNodeIds(nodes[i].children.view(), checkedNodes);
+                    }
+                }
+            }
+
+            //bind json to department tree from server
+            var json2 = @Html.Raw(Model.DepartmentJson);
+            //initialize department tree
+            $("#treeview2")
+                .kendoTreeView({
+                    checkboxes: true,
+
+                    check: onCheck2,
+
+                    dataSource: json2,
+                    dataBound: function(e) {
+
+                        console.log(e.node);
+                    }
+                });
+
+            //Check selected node
+            var treeview2 = $("#treeview2").data("kendoTreeView");
+            var getitem = treeview2.dataSource.get("@Model.DepartmentString");
+            console.log(getitem);
+            var item = treeview2.findByUid(getitem.uid);
+            treeview2.dataItem(item).set("checked", true);
+
+
+            // show checked node IDs on datasource change
+            function onCheck2(e) {
+                var checkedNodes = [],
+                    treeView = $("#treeview2").data("kendoTreeView"),
+                    message;
+
+                checkedNodeIds(treeView.dataSource.view(), checkedNodes);
+
+                var dataItem = this.dataItem(e.node);
+
+                //Quick Fix for 1 selected item
+                checkedNodes = [dataItem.id];
+
+                var rootNodes = $("#treeview2").getKendoTreeView().dataSource.data();
+
+                traverse(rootNodes,
+                    function(node) {
+                        if (node != dataItem) {
+                            node.set("checked", false);
+                        }
+                    });
+
+
+                $("#sendForm")
+                    .click(function() {
+                        $("#ParentDepartmentGUID").val(checkedNodes);
+                        return true;
+                    });
+
+
+            }
+
+            function traverse(nodes, callback) {
+                for (var i = 0; i < nodes.length; i++) {
+                    var node = nodes[i];
+                    var children = node.hasChildren && node.children.data();
+
+                    callback(node);
+
+                    if (children) {
+                        traverse(children, callback);
+                    }
+                }
+            }
+        });
+    </script>
+
+<style>
+    #treeview1 {
+        height: 630px;
+        padding: 10px;
+    }
+
+    #treeview2 {
+        /*height: 630px;*/
+        padding: 10px;
+    }
+
+        #treeview1 .k-sprite, #treeview2 .k-sprite {
+            background-image: url("../../img/coloricons-sprite.png");
+        }
+
+    .rootfolder {
+        background-position: 0 0;
+    }
+
+    .folder {
+        background-position: 0 -16px;
+    }
+
+    .pdf {
+        background-position: 0 -32px;
+    }
+
+    .html {
+        background-position: 0 -48px;
+    }
+
+    .image {
+        background-position: 0 -64px;
+    }
+
+    .demo-section {
+        direction: ltr;
+    }
+
+    .my-table-responsive {
+        height: 650px;
+    }
+
+    .demo-section #treeview1, .demo-section #treeview2 {
+        background-color: #f4f4f4;
+    }
+
+
+    /* RTL TreeView*/
+    #treeview1, #treeview2 {
+        direction: rtl;
+    }
+
+    .k-icon.k-minus, .k-icon.k-plus {
+        margin-left: 0;
+    }
+
+    .k-group > .k-item {
+        margin-right: 16px !important;
+    }
+
+        .k-group > .k-item.k-first.k-last {
+            margin-right: 0 !important;
+        }
+
+    .k-group .k-item .k-group {
+        margin-right: 16px;
+    }
+
+    .k-item.k-first.k-last .k-top {
+        margin-right: 0;
+    }
+
+    .k-treeview1 .k-sprite, .k-treeview1 .k-image {
+        margin-left: 5px;
+    }
+</style>
+}
+
+
+

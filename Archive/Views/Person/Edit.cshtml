@@ -1,0 +1,425 @@
+﻿@using Archive.ViewModel;
+@using EntityModel
+@model EditPersonViewModel
+@{
+    ViewBag.Title = "ویرایش شخص";
+}
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+}
+@section HeadCss{
+    <style>
+        .fileinput .thumbnail {
+            right: -40px;
+        }
+             .margin-top-30 {
+            margin-top: 30px;
+        }
+    </style>
+}
+
+<form action="~/Person/Edit" method="post" enctype="multipart/form-data">
+@Html.AntiForgeryToken()
+<input type="hidden" name="Person.Id" value="@Model.Person.Id"/>
+<div class="row m-t-25 p-0 m-b-25">
+    <div class="col-sm-4">
+        <div class="input-group fg-float">
+            <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+            <div class="fg-line">
+                <input name="Person.FirstName" type="text" class="form-control" value="@Model.Person.FirstName">
+                <label class="fg-label">نام</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-4">
+        <div class="input-group fg-float">
+            <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+            <div class="fg-line">
+                <input name="Person.LastName" type="text" class="form-control" value="@Model.Person.LastName">
+                <label class="fg-label">نام خانوادگی</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-4">
+        <div class="input-group fg-float">
+            <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+            <div class="fg-line">
+                <input name="Person.PhoneNumber" type="text" class="form-control" value="@Model.Person.PhoneNumber">
+                <label class="fg-label">شماره ثابت</label>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="row m-t-25 p-0 m-b-25">
+    <div class="col-sm-4">
+        <div class="input-group fg-float">
+            <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+            <div class="fg-line">
+                <input name="Person.MobileNumber" type="text" class="form-control" value="@Model.Person.MobileNumber">
+                <label class="fg-label">شماره همراه</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="input-group fg-float">
+            <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+            <div class="fg-line">
+                <input name="Person.Address" type="text" class="form-control" value="@Model.Person.Address">
+                <label class="fg-label">آدرس</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="input-group fg-float">
+            <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+            <div class="fg-line">
+                <input name="Person.Email" type="text" class="form-control" value="@Model.Person.Email">
+                <label class="fg-label">ایمیل</label>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="row m-t-25 p-0 m-b-25">
+    <div class="col-sm-6">
+        <div class="row">
+            <div class="col-sm-2 m-b-25">
+                <p class="f-500 m-b-15 c-black">جنسیت</p>
+
+                <select name="Person.Gender" class="selectpicker">
+                    @if (@Model.Person.Gender == 0)
+                    {
+                        <option selected="selected" value="0">زن</option>
+                        <option value="1">مرد</option>
+                    }
+                    else
+                    {
+                        <option value="0">زن</option>
+                        <option selected="selected" value="1">مرد</option>
+                    }
+
+                </select>
+            </div>
+            <div class="col-sm-8">
+                <p class="c-black f-500 m-b-20">تاریخ تولد</p>
+
+                <div class="input-group form-group">
+                    <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                    <div class="dtp-container fg-line">
+                        @if (Model.Person.BirthDay != null)
+                        {
+                            <input name="BirthDay" type="text" class="form-control date-picker" placeholder="Click here..." value="@DBProvider.Utilities.ToPersianTime((DateTime) Model.Person.BirthDay)">
+                        }
+                        else
+                        {
+                            <input name="BirthDay" type="text" class="form-control date-picker" placeholder="Click here..." value="">
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-4">
+        <p>انتخاب تصویر</p>
+        <div class="fileinput fileinput-new" data-provides="fileinput">
+            <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="line-height: 150px;">
+                <img src="@Model.Person.GetAvatar()"/>
+            </div>
+            <div>
+                <span class="btn btn-info btn-file waves-effect">
+                        <span class="fileinput-new">انتخاب تصویر</span>
+                        <span class="fileinput-exists">تغییر</span>
+                        <input type="hidden" value="" name="...">
+                        <input id="upload" type="file" name="fileUpload">
+                        <input id="shouldImageChange" type="hidden" name="Flag" value="false">
+                    </span>
+                <a href="#" class="btn btn-danger fileinput-exists waves-effect" data-dismiss="fileinput">حذف</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <input id="Summary" type="text" name="Person.Summary" style="display: none" value="@Model.Person.Summary"/>
+        <div class="html-editor" style="display: none;"></div>
+    </div>
+</div>
+
+<hr class="c-red"/>
+<div id="section">
+    <div class="row">
+        <div class="col-sm-4">
+            <p class="f-500 c-black m-b-15">انتخاب سازمان</p>
+
+            <select name="SelectedOrganizations" class="selectpicker" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سازمانی یافت نشد">
+                <option selected="selected" value="">بدون سازمان</option>
+                @foreach (var organizatin in Model.Organizations)
+                {
+                    if (organizatin.ParentOrganization == null)
+                    {
+                        continue;
+                    }
+
+                    if (Model.Person.PostOrganizations != null && Model.Person.PostOrganizations.Count > 0)
+                    {
+                        if (Model.Person.PostOrganizations.First().Organization != null)
+                        {
+                            if (Model.Person.PostOrganizations.First().Organization.Id == organizatin.Id)
+                            {
+                                <option selected="selected" value="@organizatin.Id">@organizatin.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@organizatin.Id">@organizatin.Name</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="@organizatin.Id">@organizatin.Name</option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="@organizatin.Id">@organizatin.Name</option>
+                    }
+                }
+            </select>
+            @*<input type="hidden" name="SelectedOrganizations" id="inputOrganizations"/>*@
+        </div>
+        <div class="col-sm-2">
+            <p class="f-500 c-black m-b-15">انتخاب سمت</p>
+
+            <select name="SelectedPosts" class="selectpicker" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سمتی یافت نشد">
+                <option selected="selected" value="">بدون سمت</option>
+                @foreach (var post in Model.Posts)
+                {
+                    if (Model.Person.PostOrganizations != null && Model.Person.PostOrganizations.Count > 0)
+                    {
+                        if (Model.Person.PostOrganizations.First().Post != null)
+                        {
+                            if (Model.Person.PostOrganizations.First().Post.Id == post.Id)
+                            {
+                                <option selected="selected" value="@post.Id">@post.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@post.Id">@post.Name</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="@post.Id">@post.Name</option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="@post.Id">@post.Name</option>
+                    }
+                }
+            </select>
+            @*<input type="hidden" name="SelectedPosts" id="inputPosts"/>*@
+        </div>
+        <div class="col-sm-2">
+            <button id="addOrganizationSection" type="button" class="btn btn-success btn-icon waves-effect waves-circle waves-float margin-right-70 margin-top-30"><i class="zmdi zmdi-plus"></i></button>
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+    @foreach (var postOrganization in (Model.Person.PostOrganizations != null && Model.Person.PostOrganizations.Count > 1) ? Model.Person.PostOrganizations.Skip(1) : new List<Post_Organization>())
+    {
+        <div class="row margin-top-30">
+            <div class="col-sm-4">
+                <select class="selectpicker" name="SelectedOrganizations" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سازمانی یافت نشد">
+                    <option selected="selected" value="">بدون سازمان</option>
+                    @foreach (var organization in Model.Organizations)
+                    {
+                        if (organization.ParentOrganization == null)
+                        {
+                            continue;
+                        }
+
+                        if (postOrganization.Organization != null)
+                        {
+                            if (postOrganization.Organization.Id == organization.Id)
+                            {
+                                <option selected="selected" value="@organization.Id">@organization.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@organization.Id">@organization.Name</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="@organization.Id">@organization.Name</option>
+                        }
+                    }
+                </select>
+                @*<input type="hidden" name="SelectedOrganizations" id="inputOrganizations"/>*@
+            </div>
+            <div class="col-sm-2">
+                <select class="selectpicker" name="SelectedPosts" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سمتی یافت نشد">
+                    <option selected="selected" value="">بدون سمت</option>
+                    @foreach (var post in Model.Posts)
+                    {
+                        if (postOrganization.Post != null)
+                        {
+                            if (postOrganization.Post.Id == post.Id)
+                            {
+                                <option selected="selected" value="@post.Id">@post.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@post.Id">@post.Name</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="@post.Id">@post.Name</option>
+                        }
+                    }
+                </select>
+                @*<input type="hidden" name="SelectedPosts" id="inputPosts"/>*@
+            </div>
+            <div id="btnPlace" class="col-sm-2">
+                <button type="button" class="removeSection btn btn-danger btn-icon waves-effect waves-circle waves-float margin-right-70"><i class="zmdi zmdi-window-minimize"></i></button>
+</div>
+            <div class="col-sm-2"></div>
+        </div>
+    }
+</div>
+
+
+<hr class="hr-color"/>
+<div class="row">
+    <div class="col-lg-2 col-centered">
+        <button id="sendForm" type="submit" class="btn bgm-red btn-lg waves-effect">ویرایش اشخاص</button>
+    </div>
+</div>
+</form>
+
+@*Templates*@
+<div id="OrganizationSection" style="display: none;">
+    <div class="row margin-top-30" style="display: none">
+        <div class="col-sm-4">
+            <select name="SelectedOrganizations" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سازمانی یافت نشد">
+                <option selected="selected" value="">بدون سازمان</option>
+                @foreach (var organizatin in Model.Organizations)
+                {
+                    if (organizatin.ParentOrganization != null)
+                    {
+                        <option value="@organizatin.Id">@organizatin.Name</option>
+                    }
+                }
+            </select>
+            @*<input type="hidden" name="SelectedOrganizations" id="inputOrganizations"/>*@
+        </div>
+        <div class="col-sm-2">
+            <select name="SelectedPosts" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سمتی یافت نشد">
+                <option selected="selected" value="">بدون سمت</option>
+                @foreach (var post in Model.Posts)
+                {
+                    <option value="@post.Id">@post.Name</option>
+                }
+            </select>
+            @*<input type="hidden" name="SelectedPosts" id="inputPosts"/>*@
+        </div>
+        <div id="btnPlace" class="col-sm-2">
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+
+    @*<script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+        <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>*@
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+
+
+
+}
+
+@section OurScripts{
+
+    <script>
+
+        $(function() {
+            if ($("#Summary").val() !== "") {
+                var html = htmlDecode($("#Summary").val());
+
+                $(".html-editor").first().code(html);
+            }
+
+            $("#sendForm")
+                .click(function() {
+                    $("#Summary").val(htmlEncode($(".html-editor").first().code()));
+                    $("#inputOrganizations").val($('#SelectedOrganizations').val());
+                    $("#inputPosts").val($("#SelectedPosts").val());
+                    return true;
+                });
+
+
+            function htmlEncode(value) {
+                return $('<div/>').text(value).html();
+            }
+
+            function htmlDecode(value) {
+                return $('<div/>').html(value).text();
+            }
+
+
+            $("#addOrganizationSection").click(function () {
+
+                var el = $("#OrganizationSection > .row").clone();
+                var btn = $('<button type="button" class="removeSection btn btn-danger btn-icon waves-effect waves-circle waves-float margin-right-70">');
+                var i = $('<i class="zmdi zmdi-window-minimize">');
+                btn.append(i);
+                btn.click(function () {
+                    $(this).parent().parent().slideUp(function () {
+                        $(this).remove();
+                    });
+                });
+
+                el.children("#btnPlace").append(btn);
+                //$(el).on("click", ".removeSection", function () {
+                //    alert("test");
+                //});
+                el.find("select").addClass("selectpicker").selectpicker("refresh");
+                el.appendTo("#section");
+                el.slideDown(function () {
+                    //$(this).children(".test").addClass("selectpicker").selectpicker("refresh");
+                });
+            });
+
+
+            $(".removeSection").click(function() {
+                $(this).parent().parent().slideUp(function () {
+                    $(this).remove();
+                });
+            });
+
+
+        });
+
+
+    </script>
+
+}
+
+

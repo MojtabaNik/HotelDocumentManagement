@@ -1,0 +1,267 @@
+﻿@using Archive.ViewModel;
+@using DBProvider
+@model IncomingLettersViewModel
+@{
+    ViewBag.Title = "مشاهده نامه های ورودی";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.rtl.min.css" rel="stylesheet" />
+    <style>
+        .fg-line:not(.disabled):after, .fg-line:not(.readonly):after {
+            z-index: 100 !important;
+        }
+    </style>
+}
+
+<div class="card-header">
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-xs-10">
+            <h2>
+                <small>جستجو در نامه های ورودی</small>
+            </h2>
+        </div>
+        <div class="col-xs-2">
+            <a href="@Url.Action("Add")" class="btn bgm-red waves-effect">افزودن نامه جدید</a>
+        </div>
+    </div>
+</div>
+
+<table id="data-table-command" class="table table-striped table-vmiddle" style="direction:rtl; text-align:right;">
+    <thead>
+        <tr>
+            <th data-column-id="id" data-visible-in-selection="false" data-visible="false" data-identifier="true">شماره نامه</th>
+            <th data-column-id="RowNumber" data-order="asc">شماره نامه</th>
+            <th data-column-id="sender">فرستنده</th>
+            <th data-column-id="received">پیرو نامه</th>
+            <th data-column-id="LetterType">نوع نامه پیرو</th>
+            <th data-column-id="CreationDate">تاریخ ایجاد</th>
+            <th data-column-id="description">شرح</th>
+            <th data-column-id="RecievedDate">تاریخ نامه رسیده</th>
+            <th data-column-id="commands" data-searchable="false" data-formatter="commands" data-visible-in-selection="false" data-sortable="false"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListReciveLetters)
+        {
+            <tr>
+                <td>@item.Id</td>
+                @if (item.RowNumber != null)
+                {
+                    <td>@item.RowNumber</td>
+                }
+
+                else
+                {
+                    <td>بدون شماره</td>
+                }
+
+                @if (item.Sender != null)
+                {
+                    if (item.Sender.Organization != null)
+                    {
+                        if (item.Sender.Post != null)
+                        {
+                            if (item.Sender.Person != null)
+                            {
+                                <td>@item.Sender.Post.Name @item.Sender.Organization.GetFullOrganizationPath() @item.Sender.Person.FullName()</td>
+                            }
+                            else
+                            {
+                                <td>@item.Sender.Post.Name @item.Sender.Organization.GetFullOrganizationPath()</td>
+                            }
+                        }
+                        else
+                        {
+                            <td>@item.Sender.Organization.GetFullOrganizationPath()</td>
+                        }
+                    }
+                    else if (item.Sender.Person != null)
+                    {
+                        <td>@item.Sender.Person.FullName()</td>
+                    }
+                    else
+                    {
+                        <td>بدون صاحب</td>
+                    }
+
+                }
+                else
+                {
+                    <td>بدون صاحب</td>
+                }
+                @{ bool hasParent = false; }
+                <td>
+                    @if (item.ParentReceiveLetter != null || item.ParentSendLetterOut != null)
+                    {
+                        switch (item.ParentType)
+                        {
+                            case ParentType.Receive:
+                                if (String.IsNullOrEmpty(item.ParentReceiveLetter.RowNumber))
+                                {
+                                    <text>
+                                        بدون شماره
+                                    </text>
+                                }
+                                else
+                                {
+                                    <text>
+                                        @item.ParentReceiveLetter.RowNumber
+                                    </text>
+                                }
+                                hasParent = true;
+                                break;
+                            case ParentType.Send:
+                                if (String.IsNullOrEmpty(item.ParentSendLetterOut.RowNumber))
+                                {
+                                    <text>
+                                        بدون شماره
+                                    </text>
+                                }
+                                else
+                                {
+                                    <text>
+                                        @item.ParentSendLetterOut.RowNumber
+                                    </text>
+                                }
+                                hasParent = true;
+                                break;
+                            default:
+                                <text>
+                                    -
+                                </text>
+                                break;
+                        }
+
+                    }
+                    else
+                    {
+                        <text>
+                            -
+                        </text>
+                    }
+                </td>
+                @if (hasParent)
+                {
+                    switch (item.ParentType)
+                    {
+                        case ParentType.Receive:
+                            <td>ورودی</td>
+                            break;
+                        case ParentType.Send:
+                            <td>خروجی</td>
+                            break;
+                        default:
+                            <td>-</td>
+                            break;
+                    }
+                }
+                else
+                {
+                    <td>-</td>
+                }
+
+                @if (item.ArchiveDateTime != null)
+                {
+                    <td>@item.ArchiveDateTime.ToPersianTime()</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                <td>@item.Description</td>
+
+                @if (item.LetterDateTime != null)
+                {
+                    <td>@item.LetterDateTime.ToPersianTime()</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+            </tr>
+                    }
+    </tbody>
+</table>
+
+@section Scripts{
+
+    <script src="~/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    <script src="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.all.min.js"></script>
+    <script src="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+    <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+    <script src="~/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+    <script src="~/js/purl.js"></script>
+
+    <!-- Data Table -->
+    <script type="text/javascript">
+        $(document)
+            .ready(function () {
+                //Command Buttons
+                $("#data-table-command")
+                    .bootgrid({
+                        css: {
+                            icon: 'zmdi icon',
+                            iconColumns: 'zmdi-view-module',
+                            iconDown: 'zmdi-expand-more',
+                            iconRefresh: 'zmdi-refresh',
+                            iconUp: 'zmdi-expand-less'
+                        },
+                        formatters: {
+                            "commands": function (column, row) {
+                                return "<button type=\"button\" onClick='window.location = \"/IncomingLetters/DownloadLetterContent/" +
+                                    row.id +
+                                    "\"' class=\"btn btn-icon command-download waves-effect waves-circle\" data-row-id=\"" +
+                                    row.id +
+                                    "\"><span class=\"zmdi zmdi-download\"></span></button> " +
+                                    "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" +
+                                    row.id +
+                                    "\"><span class=\"zmdi zmdi-edit\"></span></button> ";
+                                //"<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-eye\"></span></button>" +
+                                //"<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                            }
+                        },
+                        labels: {
+                            noResults: "!!هیچ موردی یافت نشد",
+                            infos: "نمایش {{ctx.start}} تا {{ctx.end}} از {{ctx.total}}",
+                            search: "جستجو",
+                            all: "نمایش همه"
+                        }
+                    })
+                    .on("loaded.rs.jquery.bootgrid",
+                        function () {
+                            $("button.command-edit")
+                                .click(function () {
+                                    window.location = "/IncomingLetters/Edit?ID=" + $(this).data("row-id");
+                                });
+                        });
+
+                //Make Header and right menu Hidden
+                if ($.url().param('showSelect')) {
+                    $("#header").css({ 'display': 'none' });
+                    $("#main").css({ 'padding-top': '30px' });
+                }
+
+            });
+    </script>
+
+}

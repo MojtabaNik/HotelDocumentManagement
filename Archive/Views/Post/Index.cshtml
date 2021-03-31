@@ -1,0 +1,144 @@
+﻿@model Archive.ViewModel.PostViewModel
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+    <style>
+        .fg-line:not(.disabled):after, .fg-line:not(.readonly):after {
+            z-index: 100 !important;
+        }
+    </style>
+}
+
+<div class="card-header">
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-xs-10">
+            <h2>
+                <small>ایجاد و مشاهده سمت ها</small>
+            </h2>
+        </div>
+    </div>
+    <form id="form" action="~/Post/Add" method="post">
+        @if (Model.isEdit)
+        {
+            <input type="hidden" name="post.Id" value="@Model.post.Id"/>
+        }
+        <div class="row m-t-25 p-0 m-b-25">
+            <div class="col-xs-10">
+                <div class="input-group fg-float">
+                    <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                    <div class="fg-line">
+                        <input id="postName" name="post.Name" type="text" class="form-control">
+                        <label class="fg-label">نام سمت جدید</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4 center-block">
+                <div class="input-group fg-float">
+                    <span class="input-group-addon"></span>
+                    <div class="fg-line">
+                        <button id="sendForm" type="submit" class="btn bgm-red btn-lg waves-effect">ایجاد سمت جدید</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<table id="data-table-command" class="table table-striped table-vmiddle" style="direction:rtl; text-align:right;">
+    <thead>
+        <tr>
+            <th data-column-id="id" data-visible="false" data-identifier="true" data-order="asc">شماره نامه</th>
+            <th data-column-id="RowNumber">نام سمت</th>
+            <th data-column-id="commands" data-searchable="false" data-formatter="commands" data-visible-in-selection="false" data-sortable="false"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.posts)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+
+    <script src="~/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    <script src="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.all.min.js"></script>
+    <script src="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+    <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+    <script src="~/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+    <script src="~/js/purl.js"></script>
+
+    <!-- Data Table -->
+    <script type="text/javascript">
+        $(document)
+            .ready(function () {
+                //Command Buttons
+                $("#data-table-command")
+                    .bootgrid({
+                        css: {
+                            icon: 'zmdi icon',
+                            iconColumns: 'zmdi-view-module',
+                            iconDown: 'zmdi-expand-more',
+                            iconRefresh: 'zmdi-refresh',
+                            iconUp: 'zmdi-expand-less'
+                        },
+                        formatters: {
+                            "commands": function (column, row) {
+                                return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> ";
+                            }
+                        },
+                        labels: {
+                            noResults: "!!هیچ موردی یافت نشد",
+                            infos: "نمایش {{ctx.start}} تا {{ctx.end}} از {{ctx.total}}",
+                            search: "جستجو",
+                            all: "نمایش همه"
+                        }
+                    })
+                    .on("loaded.rs.jquery.bootgrid",
+                        function () {
+                            $("button.command-edit")
+                                .click(function () {
+                                    window.location = "/Post/Index/" + $(this).data("row-id");
+                                });
+                        });
+
+                //Make Header and right menu Hidden
+                if ($.url().param('showSelect')) {
+                    $("#header").css({ 'display': 'none' });
+                    $("#main").css({ 'padding-top': '30px' });
+                }
+
+
+                @if (Model.isEdit)
+                {
+                    <text>
+                $("#form").attr("action", "/Post/Edit/@Model.id.ToString()");
+                $("#postName").val("@Model.post.Name");
+                $("#sendForm").text("ویرایش سمت");
+                </text>
+                }
+            });
+    </script>
+
+}

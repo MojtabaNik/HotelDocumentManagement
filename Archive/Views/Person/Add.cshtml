@@ -1,0 +1,299 @@
+﻿@using Archive.ViewModel;
+@model AddPersonViewModel
+@{
+    ViewBag.Title = "افزودن شخص جدید";
+}
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+}
+@section HeadCss{
+    <style>
+        .fileinput .thumbnail {
+            right: -40px;
+        }
+
+        .margin-top-30 {
+            margin-top: 30px;
+        }
+    </style>
+}
+
+<form action="~/Person/Add" method="post" enctype="multipart/form-data">
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="Person.FirstName" type="text" class="form-control">
+                    <label class="fg-label">نام</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="Person.LastName" type="text" class="form-control">
+                    <label class="fg-label">نام خانوادگی</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-phone zmdi-hc-fw"></i></span>
+                <div class="fg-line">
+                    <input name="Person.PhoneNumber" type="text" class="form-control">
+                    <label class="fg-label">شماره ثابت</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-smartphone-iphone zmdi-hc-fw"></i></span>
+                <div class="fg-line">
+                    <input name="Person.MobileNumber" type="text" class="form-control">
+                    <label class="fg-label">شماره همراه</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-home zmdi-hc-fw"></i></span>
+                <div class="fg-line">
+                    <input name="Person.Address" type="text" class="form-control">
+                    <label class="fg-label">آدرس</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-email zmdi-hc-fw"></i></span>
+                <div class="fg-line">
+                    <input name="Person.Email" type="text" class="form-control">
+                    <label class="fg-label">ایمیل</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-4 m-b-25">
+                    <p class="f-500 m-b-15 c-black">جنسیت</p>
+
+                    <select name="Person.Gender" class="selectpicker">
+                        <option value="1">مرد</option>
+                        <option value="0">زن</option>
+                    </select>
+                </div>
+                <div class="col-sm-8">
+                    <p class="c-black f-500 m-b-20">تاریخ تولد</p>
+
+                    <div class="input-group form-group">
+                        <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                        <div class="dtp-container fg-line">
+                            <input name="BirthDay" type="text" class="form-control date-picker" placeholder="Click here...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <p>انتخاب تصویر</p>
+            <div class="fileinput fileinput-new" data-provides="fileinput">
+                <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="line-height: 150px;"></div>
+                <div>
+                    <span class="btn btn-info btn-file waves-effect">
+                        <span class="fileinput-new">انتخاب تصویر</span>
+                        <span class="fileinput-exists">تغییر</span>
+                        <input type="hidden" value="" name="..."><input id="upload" type="file" name="fileUpload">
+                    </span>
+                    <a href="#" class="btn btn-danger fileinput-exists waves-effect" data-dismiss="fileinput">حذف</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <input id="Summary" type="text" name="Person.Summary" style="display: none" />
+            <div class="html-editor" style="display: none;"></div>
+        </div>
+    </div>
+    <hr class="c-red" />
+    <div id="section">
+        <div class="row">
+            <div class="col-sm-4">
+                <p class="f-500 c-black m-b-15">انتخاب سازمان</p>
+
+                <select name="SelectedOrganizations" class="selectpicker" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سازمانی یافت نشد">
+                    <option selected="selected" value="">بدون سازمان</option>
+                    @foreach (var organizatin in Model.Organizations)
+                    {
+                        if (organizatin.ParentOrganization == null)
+                        {
+                            continue;
+                        }
+                        <option value="@organizatin.Id">@organizatin.Name</option>
+                    }
+                </select>
+                @*<input type="hidden" name="SelectedOrganizations" id="inputOrganizations"/>*@
+            </div>
+            <div class="col-sm-2">
+                <p class="f-500 c-black m-b-15">انتخاب سمت</p>
+
+                <select name="SelectedPosts" class="selectpicker" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سمتی یافت نشد">
+                    <option selected="selected" value="">بدون سمت</option>
+                    @foreach (var post in Model.Posts)
+                    {
+                        <option value="@post.Id">@post.Name</option>
+                    }
+                </select>
+                @*<input type="hidden" name="SelectedPosts" id="inputPosts"/>*@
+            </div>
+            <div class="col-sm-2">
+                <button id="addOrganizationSection" type="button" class="btn btn-success btn-icon waves-effect waves-circle waves-float margin-right-70 margin-top-30"><i class="zmdi zmdi-plus"></i></button>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <hr class="hr-color" />
+    <div class="row">
+        <div class="col-lg-4">
+
+        </div>
+        <div class="col-lg-6">
+            <div class="col-sm-2">
+                <button id="sendForm" type="submit" class="btn bgm-red btn-lg waves-effect">ذخیره</button>
+            </div>
+            <div class="col-sm-2">
+                <button id="sendForm2" type="submit" class="btn bgm-red btn-lg waves-effect">ذخیره و مشاهده</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@*Templates*@
+<div id="OrganizationSection" style="display: none;">
+    <div class="row margin-top-30" style="display: none">
+        <div class="col-sm-4">
+            <select name="SelectedOrganizations" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سازمانی یافت نشد">
+                <option selected="selected" value="">بدون سازمان</option>
+                @foreach (var organizatin in Model.Organizations)
+                {
+                    if (organizatin.ParentOrganization != null)
+                    {
+                        <option value="@organizatin.Id">@organizatin.Name</option>
+                    }
+                }
+            </select>
+            @*<input type="hidden" name="SelectedOrganizations" id="inputOrganizations"/>*@
+        </div>
+        <div class="col-sm-2">
+            <select name="SelectedPosts" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سمتی یافت نشد">
+                <option selected="selected" value="">بدون سمت</option>
+                @foreach (var post in Model.Posts)
+                {
+                    <option value="@post.Id">@post.Name</option>
+                }
+            </select>
+            @*<input type="hidden" name="SelectedPosts" id="inputPosts"/>*@
+        </div>
+        <div id="btnPlace" class="col-sm-2">
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts{
+
+
+    @*<script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+        <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>*@
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+
+
+
+}
+
+@section OurScripts{
+
+    <script>
+        $(function () {
+            $("#sendForm")
+                .click(function () {
+                    $("#Summary").val(htmlEncode($(".note-editable").html()));
+                    return true;
+                });
+        });
+
+        function htmlEncode(value) {
+            return $('<div/>').text(value).html();
+        }
+
+        $(function () {
+
+            $("#addOrganizationSection").click(function () {
+
+                var el = $("#OrganizationSection > .row").clone();
+                var btn = $('<button type="button" class="removeSection btn btn-danger btn-icon waves-effect waves-circle waves-float margin-right-70">');
+                var i = $('<i class="zmdi zmdi-window-minimize">');
+                btn.append(i);
+                btn.click(function() {
+                    $(this).parent().parent().slideUp(function() {
+                        $(this).remove();
+                    });
+                });
+
+                el.children("#btnPlace").append(btn);
+                //$(el).on("click", ".removeSection", function () {
+                //    alert("test");
+                //});
+                el.find("select").addClass("selectpicker").selectpicker("refresh");
+                el.appendTo("#section");
+                el.slideDown(function() {
+                    //$(this).children(".test").addClass("selectpicker").selectpicker("refresh");
+                });
+            });
+
+
+            $(".removeSection").click(function () {
+                $(this).parent().parent().slideUp(function () {
+                    $(this).remove();
+                });
+            });
+
+
+        });
+
+    </script>
+
+}
+
+

@@ -1,0 +1,1394 @@
+﻿@using DBProvider
+@model Archive.ViewModel.OutgoingLetters.AddOutgoingViewModel
+@{
+    ViewBag.Title = "ایجاد نامه";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+    <link href="~/vendors/bootgrid/jquery.bootgrid.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+}
+
+@section HeadCss {
+    <link href="~/css/KendoUI/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.rtl.min.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.default.min.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <style>
+        /*Fix Problem of Bootgrid row click*/
+        .bootgrid-table td.select-cell .select-box, .bootgrid-table th.select-cell .select-box {
+            display: none;
+        }
+
+        #data-table-selection tr {
+            cursor: pointer;
+        }
+
+        #data-table-selection-Department {
+            cursor: pointer;
+        }
+
+        .margin-top-20 {
+            margin-top: 15px;
+        }
+    </style>
+}
+<form action="Add" method="post" enctype="multipart/form-data">
+@Html.AntiForgeryToken()
+<div class="row m-t-25 p-0 m-b-25">
+<div class="row">
+    <div class="col-xs-5">
+        <div class="card-header">
+            <p class="c-black f-500 m-b-40">انتخاب سازمان</p>
+        </div>
+    </div>
+    <div class="col-xs-7">
+        <div class="card-header">
+            @*<p class="c-black f-500 m-b-40">انتخاب سمت و شخص</p>*@
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-5 tree-view-box">
+        <div class="demo-section k-content">
+            <div>
+                <div id="treeview1"></div>
+                <input id="OrganizationsGuidString" name="OrganizationGuid" type="hidden"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-7">
+        <div class="row">
+            @*post type*@
+            <p class="f-500 c-black m-b-15">انتخاب سمت</p>
+            <select disabled="disabled" id="selectPost" name="PostGuid" class="selectpicker col-xs-6" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سمتی یافت نشد">
+                <option selected="selected" value="">بدون سمت</option>
+                @foreach (var post in Model.Posts)
+                {
+                    <option value="@post.Id">@post.Name</option>
+                }
+            </select>
+            <div class="col-sm-4 m-b-20 margin-top-20">
+                <div class="toggle-switch">
+                    <input id="ts1" type="checkbox" hidden="hidden" checked="checked">
+                    <label for="ts1" class="ts-helper"></label>
+                    <label for="ts1" class="ts-label">سمت نامعلوم</label>
+                </div>
+            </div>
+        </div>
+
+        <br/>
+        <br/>
+        <p class="c-black f-500 m-b-40">انتخاب شخص</p>
+        <br/>
+
+
+        <div id="tablePosition">
+            <div id="tableSection" class="table-responsive my-table-responsive c-overflow mCustomScrollbar _mCS_1 mCS-autoHide mCS-dir-rtl">
+                <table id="data-table-selection" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th data-column-id="id" data-visible="false" data-visible-in-selection="false" data-identifier="true">ID</th>
+                        <th data-column-id="Name">نام و نام خانوادگی</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model.People != null)
+                    {
+                        foreach (var item in Model.People)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>
+                                    @item.FullName()
+                                </td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+
+                </table>
+                <input name="PersonGuid" id="PersonListString" type="hidden"/>
+                <div class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: block;">
+                    <div class="mCSB_draggerContainer">
+                        <div class="mCSB_draggerRail"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<br/>
+<div class="row">
+    <div class="col-xs-5">
+        <button type="submit" disabled="disabled" class="btn bgm-red btn-lg waves-effect">افزودن سازمان</button>
+    </div>
+    <div class="col-xs-7">
+        <button type="submit" disabled="disabled" class="btn bgm-red btn-lg waves-effect">افزودن شخص</button>
+    </div>
+</div>
+<hr class="hr-color"/>
+<div class="row">
+    <div class="col-xs-5">
+        <div class="card-header">
+            <p class="c-black f-500 m-b-40">انتخاب واحد</p>
+
+        </div>
+    </div>
+
+    <div class="col-xs-7">
+        <div class="card-header">
+            <p class="c-black f-500 m-b-40">انتخاب کارمند</p>
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-5 tree-view-box">
+        <div class="demo-section k-content">
+            <div>
+                <div id="treeview2"></div>
+                <input id="DepartmentGuid" name="DepartmentGuid" type="hidden"/>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-7">
+        <div class="row">
+            @*post type*@
+            <p class="f-500 c-black m-b-15">انتخاب سمت</p>
+            <select disabled="disabled" id="selectDepartmentPost" name="DepartmentPostGuid" class="selectpicker col-xs-6" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سمتی یافت نشد">
+                <option selected="selected" value="">بدون سمت</option>
+                @foreach (var post in Model.Posts)
+                {
+                    <option value="@post.Id">@post.Name</option>
+                }
+            </select>
+            <div class="col-sm-4 m-b-20 margin-top-20">
+                <div class="toggle-switch">
+                    <input id="ts2" type="checkbox" hidden="hidden" checked="checked">
+                    <label for="ts2" class="ts-helper"></label>
+                    <label for="ts2" class="ts-label">سمت نامعلوم</label>
+                </div>
+            </div>
+        </div>
+
+        <br/>
+        <br/>
+        <p class="c-black f-500 m-b-40">انتخاب شخص</p>
+        <br/>
+
+
+        <div id="tablePositionDepartment">
+            <div id="tableSectionDepartment" class="table-responsive my-table-responsive c-overflow mCustomScrollbar _mCS_1 mCS-autoHide mCS-dir-rtl">
+                <table id="data-table-selection-Department" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th data-column-id="id" data-visible="false" data-visible-in-selection="false" data-identifier="true">ID</th>
+                        <th data-column-id="Name">نام و نام خانوادگی</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model.People != null)
+                    {
+                        foreach (var item in Model.Employees)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>
+                                    @item.FullName()
+                                </td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+
+                </table>
+                <input name="EmployeeGuid" id="EmployeeGuid" type="hidden"/>
+                <div class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: block;">
+                    <div class="mCSB_draggerContainer">
+                        <div class="mCSB_draggerRail"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<div class="row">
+    <div class="col-xs-5">
+        <button disabled="disabled" type="submit" class="btn bgm-red btn-lg waves-effect">افزودن واحد</button>
+    </div>
+    <div class="col-xs-7">
+        @*<button id="SelectParentLetter" class="btn bgm-orange btn-lg waves-effect">انتخاب نامه والد</button>
+                    <input type="hidden" class="ParentSendletterId" name="ParentSendletterId" />
+                    <span class="demotextbox1"></span>*@
+    </div>
+</div>
+<hr class="hr-color"/>
+<div class="row">
+<div class="card-body card-padding">
+<div class="row">
+
+    <div class="col-xs-3">
+        <p class="f-500 m-b-15 c-black">نوع</p>
+
+        <select name="sendLetter.Assortment.LetterType" class="selectpicker">
+            <option value="0">شخصی</option>
+            <option value="1">اداری </option>
+        </select>
+    </div>
+    <div class="col-xs-3">
+        <p class="f-500 m-b-15 c-black">سطح امنیت</p>
+
+        <select name="sendLetter.Assortment.Security" class="selectpicker">
+            <option value="0">محرمانه</option>
+            <option value="1">فوق محرمانه</option>
+            <option value="2">سری </option>
+            <option value="3">به کلی سری</option>
+        </select>
+    </div>
+    <div class="col-xs-3">
+        <p class="f-500 m-b-15 c-black">ماهیت</p>
+        <select name="sendLetter.Assortment.Nature" class="selectpicker dropdown-menu-right">
+            <option value="0">دستوری</option>
+            <option value="1">خبری</option>
+            <option value="2">درخواستی</option>
+
+        </select>
+    </div>
+    <div class="col-xs-3">
+        <p class="f-500 m-b-15 c-black">اولویت</p>
+        <select name="sendLetter.Assortment.Priority" class="selectpicker">
+            <option value="0">عادی</option>
+            <option value="1">سریع</option>
+            <option value="2">فوری</option>
+        </select>
+    </div>
+</div>
+<br/>
+<br/>
+<div class="row">
+
+    <div class="col-xs-3">
+        <p class="f-500 m-b-15 c-black">محتوا</p>
+        <select name="sendLetter.Assortment.ContentType" class="selectpicker">
+            <option value="0">مالی</option>
+            <option value="1">فرهنگی</option>
+            <option value="2">علمی</option>
+            <option value="3">تاریخی</option>
+            <option value="4">عمرانی</option>
+        </select>
+    </div>
+    <div class="col-xs-3">
+        <p class="f-500 m-b-15 c-black">وضعیت</p>
+        <select name="sendLetter.Assortment.Situation" class="selectpicker">
+            <option value="0">اداری - استنادی - جاری</option>
+            <option value="1">بایگانی - اطلاعتی -راکد</option>
+        </select>
+    </div>
+    <div class="col-xs-3">
+        <p class="f-500 m-b-15 c-black">اعتبار قانونی</p>
+        <select name="sendLetter.Assortment.Legalvalidity" class="selectpicker">
+            <option value="0">عادی</option>
+            <option value="1">قانونی</option>
+        </select>
+    </div>
+    <div class="col-xs-3">
+        <p class="f-500 m-b-15 c-black">پرونده ها</p>
+        <select id="SelectedCases" name="SelectedCasesGuid" class="selectpicker" multiple data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سازمانی یافت نشد">
+            @foreach (var Case in Model.Cases)
+            {
+                if (Case.ParentCase != null)
+                {
+
+                    <option value="@Case.Id">@Case.Name</option>
+
+                }
+            }
+        </select>
+        @*<input type="hidden" name="SelectedCasesGuidString" id="InputCases" />*@
+    </div>
+    <br/>
+    <br/>
+</div>
+<br/>
+<br/>
+<div class="row">
+    <div class="col-xs-4">
+        <p class="f-500 m-b-15 c-black">قالب نامه</p>
+        <select name="LetterTemplate" class="selectpicker">
+            @foreach (var template in Model.Templates)
+            {
+                <option value="@template.Id">@template.File.Name</option>
+            }
+        </select>
+    </div>
+    <div class="col-xs-4 ">
+        <p class="c-black f-500 m-b-20">تاریخ نامه </p>
+        <div class="input-group form-group">
+
+            <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+            <div class="dtp-container fg-line">
+                <input id="LetterDateTime" name="LetterDateTime" type="text" class="form-control date-picker" placeholder="Click here...">
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <div class="row">
+            <p class="f-500 m-b-15 c-black">شماره نامه</p>
+            <div class="col-xs-3 margin-top-20">
+                <label class="checkbox checkbox-inline m-r-20">
+                    <input id="autoRowNumber" name="autoRowNumber" type="checkbox" value="true" checked="checked">
+                    <i class="input-helper"></i>
+                    اتوماتیک
+                </label>
+            </div>
+            <div class="col-xs-9">
+                <div class="input-group fg-float">
+                    <span class="input-group-addon"><i class="zmdi zmdi-email zmdi-hc-fw"></i></span>
+                    <div class="fg-line">
+                        <input dir="rt" id="RowNumber" name="RowNumber" type="text" class="form-control" disabled="disabled">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <p class="c-black f-500 m-b-20">انتخاب نامه والد</p>
+        <button id="SelectParentLetter" class="btn bgm-orange btn-sm waves-effect">انتخاب نامه والد</button>
+        <input type="hidden" id="ParentletterId" name="ParentletterId"/>
+        <input type="hidden" id="ParentType" name="sendLetter.ParentType" value="@ParentType.Send"/>
+        <span class="demotextbox1"></span>
+        <button style="display: none;" type="button" id="removeParent" class="btn btn-danger btn-icon waves-effect waves-circle waves-float margin-right-70"><i class="zmdi zmdi-window-minimize"></i></button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="card-body card-padding">
+        <p class="f-500 c-black m-b-20">متن نامه</p>
+
+        <div class="html-editor">
+        </div>
+        <input type="hidden" id="Body" name="sendLetter.Body"/>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-xs-6 choose-file-box">
+        <h5>انتخاب فایل های نامه</h5>
+        <div class="choose-file-btns">
+            <div class='fileinput fileinput-new' data-provides='fileinput'>
+                <span class='btn btn-primary btn-file m-r-10'>
+                                    <span class='fileinput-new'>انتخاب فایل</span>
+                                    <span class='fileinput-exists'>تغییر</span>
+                                    <input type='file' name='fileUploadLetters'>
+                                </span>
+                <span class='fileinput-filename'></span>
+                <a href='#' class='close fileinput-exists' data-dismiss='fileinput'>&times;</a>
+            </div>
+            <br/>
+        </div>
+        <div class="add-new-file-btn">
+            <button class="btn btn-success btn-icon waves-effect waves-circle waves-float margin-right-70"><i class="zmdi zmdi-plus"></i></button>
+        </div>
+    </div>
+    <div class="col-xs-6 choose-file-box">
+        <h5>انتخاب فایل های پیوست</h5>
+        <div class="choose-attach-file-btns">
+            <div class='fileinput fileinput-new' data-provides='fileinput'>
+                <span class='btn btn-primary btn-file m-r-10'>
+                                    <span class='fileinput-new'>انتخاب فایل</span>
+                                    <span class='fileinput-exists'>تغییر</span>
+                                    <input type='file' name='fileUploadAppendages'>
+                                </span>
+                <span class='fileinput-filename'></span>
+                <a href='#' class='close fileinput-exists' data-dismiss='fileinput'>&times;</a>
+            </div>
+            <br/>
+        </div>
+        <div class="add-new--attach-file-btn">
+            <button class="btn btn-success btn-icon waves-effect waves-circle waves-float margin-right-70"><i class="zmdi zmdi-plus"></i></button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="card-body card-padding">
+        <p class="c-black f-500 m-b-20">توضیحات نامه</p>
+
+        <div class="form-group">
+            <div class="fg-line">
+                <textarea class="form-control" rows="5" placeholder="توضیحاتی مختصر در مورد نامه" name="sendLetter.Description"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-5">
+
+    </div>
+    <div class="col-lg-6">
+        <div class="col-sm-2">
+            <button id="sendForm" type="submit" class="btn bgm-red btn-lg waves-effect">ذخیره</button>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+</form>
+
+
+<div id="test" style="width: 850px; height: 600px;display: none">
+    <iframe width="850" height="600" src='/AdvanceSearch/Index?showSelect=true&&selector =".demotextbox1",window.opener.document'></iframe>
+</div>
+
+@section Scripts{
+    <script>
+        var chooseFileBtn0 = "<div class='fileinput fileinput-new' data-provides='fileinput'>" +
+            "<span class='btn btn-primary btn-file m-r-10'><span class='fileinput-new'>" +
+            "انتخاب فایل</span><span class='fileinput-exists'>تغییر</span><input type=" +
+            "'file' name='fileUploadLetters'></span><span class='fileinput-filename'></span><a href=" +
+            "'#' class='close fileinput-exists' data-dismiss='fileinput'>&times;</a></div><br />";
+
+        var chooseFileBtn1 = "<div class='fileinput fileinput-new' data-provides='fileinput'>" +
+            "<span class='btn btn-primary btn-file m-r-10'><span class='fileinput-new'>" +
+            "انتخاب فایل</span><span class='fileinput-exists'>تغییر</span><input type=" +
+            "'file' name='fileUploadAppendages'></span><span class='fileinput-filename'></span><a href=" +
+            "'#' class='close fileinput-exists' data-dismiss='fileinput'>&times;</a></div><br />";
+
+        $(".add-new-file-btn")
+            .click(function() {
+                $(".choose-file-btns").append(chooseFileBtn0);
+                return false;
+            });
+        $(".add-new--attach-file-btn")
+            .click(function() {
+                $(".choose-attach-file-btns").append(chooseFileBtn1);
+                return false;
+            });
+    </script>
+
+}
+
+@section OurScripts {
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+    <script src="~/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+    <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>
+
+    <script src="~/js/kendo.all.min.js"></script>
+    <script src="~/js/console.js"></script>
+
+    <script src="~/js/demo.js"></script>
+    <script src="~/js/bpopup.js"></script>
+
+
+    <script>
+        //Part 1 - tree view of Organizations
+        //Binding json of this user showable organizations from server
+        var json1 = @Html.Raw(Model.OrganizationJson);
+        var selectedOrganizationId = undefined;
+        //initial tree view
+        $("#treeview1")
+            .kendoTreeView({
+                //checkboxes: {
+                //    checkChildren: true
+                //},
+                checkboxes: true,
+                dataSource: json1,
+                //on check it will call onCheck Function - this would save state of selected nodes + ajax to manipulate bootgrid
+                check: onCheck
+
+            });
+
+        // function that gathers IDs of checked nodes- this function is shared between all tree views
+        function checkedNodeIds(nodes, checkedNodes) {
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].checked) {
+                    checkedNodes.push(nodes[i].id);
+                }
+
+                if (nodes[i].hasChildren) {
+                    checkedNodeIds(nodes[i].children.view(), checkedNodes);
+                }
+            }
+        }
+
+        // show checked node IDs on datasource change + ajax to server for people list of those selected organizations
+        function onCheck(e) {
+            var checkedNodes = [],
+                treeView = $("#treeview1").data("kendoTreeView"),
+                message;
+
+            //this seciton is for multiple select only
+            //checkedNodeIds(treeView.dataSource.view(), checkedNodes);
+
+            var dataItem = this.dataItem(e.node);
+
+            //Quick Fix for 1 selected item
+            if (dataItem.checked) {
+                checkedNodes = [dataItem.id];
+                selectedOrganizationId = checkedNodes;
+            } else {
+                checkedNodes = [];
+                selectedOrganizationId = undefined;
+            }
+
+
+            var selectedPostID = $("#selectPost").val();
+
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetPersons", "OutgoingLetters")',
+                data: JSON.stringify({
+                    idList: checkedNodes,
+                    postGuid: selectedPostID,
+                    noPost: $("#ts1").is(":checked")
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: successFunc1,
+                error: errorFunc1
+            });
+
+
+            var rootNodes = $("#treeview1").getKendoTreeView().dataSource.data();
+
+            traverse1(rootNodes,
+                function(node) {
+                    if (node != dataItem) {
+                        node.set("checked", false);
+                    }
+                });
+
+
+        }
+
+
+        function traverse1(nodes, callback) {
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                var children = node.hasChildren && node.children.data();
+
+                callback(node);
+
+                if (children) {
+                    traverse1(children, callback);
+                }
+            }
+        }
+
+        var hiddenSelectedOrganization = "";
+        var hiddenSelectedPerson = "";
+        var hiddenSelectedPost = "";
+
+        //Functions to ajax treeView1
+        function successFunc1(data, status) {
+            if ($("#ts1").is(":checked") && selectedOrganizationId) {
+                $("#tablePosition")
+                    .fadeOut(function() {
+                        $("#tableSection").remove();
+                        $("#tablePosition").html("");
+
+                        var rowcounter = 0;
+                        var htmlString =
+                            '<div id="tableSection" class="table-responsive my-table-responsive c-overflow mCustomScrollbar _mCS_1 mCS-autoHide mCS-dir-rtl"><table id="data-table-selection" class="table table-striped"><thead><tr><th data-column-id="id" data-visible="false" data-visible-in-selection="false">ID</th><th data-column-id="rowNumber2"  data-identifier="true">ردیف</th><th data-column-id="Name">نام و نام خانوادگی</th><th data-column-id="Post">سمت</th><th data-column-id="postID" data-visible="false" data-visible-in-selection="false">PostID</th><th data-column-id="organizationID" data-visible="false" data-visible-in-selection="false">OrganizaitionID</th></tr></thead><tbody>';
+                        data.forEach(function(item) {
+
+                            if(item.FirstName==null)
+                                item.FirstName = "";
+                            if(item.LastName==null)
+                                item.LastName = "";
+
+                            htmlString += '<tr><td>' +
+                                item.Id +
+                                '</td><td>' +
+                                ++rowcounter +
+                                '</td><td>' +
+                                item.FirstName +
+                                " " +
+                                item.LastName +
+                                '</td><td>' +
+                                item.Name +
+                                " " +
+                                item.organizationName +
+                                '</td><td>' +
+                                item.postID +
+                                '</td><td>' +
+                                item.organizationID +
+                                '</td></tr>';
+                        });
+
+                        htmlString +=
+                            '</tbody></table><input name="PersonGuid" id="PersonListString" type="hidden" /><div class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: block;"><div class="mCSB_draggerContainer"><div class="mCSB_draggerRail"></div></div></div></div>';
+
+
+                        $("#tablePosition").append($(htmlString));
+
+                        $("#tablePosition").fadeIn();
+
+
+                        $("#data-table-selection")
+                            .bootgrid({
+                                css: {
+                                    icon: 'zmdi icon',
+                                    iconColumns: 'zmdi-view-module',
+                                    iconDown: 'zmdi-expand-more',
+                                    iconRefresh: 'zmdi-refresh',
+                                    iconUp: 'zmdi-expand-less'
+                                },
+                                selection: true,
+                                multiSelect: false,
+                                rowSelect: true,
+                                keepSelection: true
+                            })
+                            .on("loaded.rs.jquery.bootgrid",
+                                function(e) {
+                                    /* your code goes here */
+                                    //Fix Click on Bootgrid
+                                    $("#data-table-selection div.checkbox")
+                                        .click(function() {
+                                            $(this).parent().parent().click();
+                                        });
+
+                                    //Select and deselect if cant there is not specific input for post organization and person
+                                    $(this)
+                                        .on("selected.rs.jquery.bootgrid",
+                                            function(e, x) {
+                                                /* your code goes here */
+                                                hiddenSelectedPerson = x[0].id;
+                                                hiddenSelectedOrganization = x[0].organizationID;
+                                                hiddenSelectedPost = x[0].postID;
+                                            });
+
+                                    $(this)
+                                        .on("deselected.rs.jquery.bootgrid",
+                                            function(e, x) {
+                                                /* your code goes here */
+                                                hiddenSelectedPerson = "";
+                                                hiddenSelectedOrganization = "";
+                                                hiddenSelectedPost = "";
+                                            });
+
+                                });
+
+
+                    });
+            } else {
+                $("#tablePosition")
+                    .fadeOut(function() {
+                        $("#tableSection").remove();
+                        $("#tablePosition").html("");
+
+
+                        var htmlString =
+                            '<div id="tableSection" class="table-responsive my-table-responsive c-overflow mCustomScrollbar _mCS_1 mCS-autoHide mCS-dir-rtl"><table id="data-table-selection" class="table table-striped"><thead><tr><th data-column-id="id" data-visible="false" data-visible-in-selection="false" data-identifier="true">ID</th><th data-column-id="Name">نام و نام خانوادگی</th></tr></thead><tbody>';
+                        data.forEach(function(item) {
+
+                            if(item.FirstName==null)
+                                item.FirstName = "";
+                            if(item.LastName==null)
+                                item.LastName = "";
+
+                            htmlString += '<tr><td>' +
+                                item.Id +
+                                '</td><td>' +
+                                item.FirstName +
+                                " " +
+                                item.LastName +
+                                '</td></tr>';
+                        });
+
+                        htmlString +=
+                            '</tbody></table><input name="PersonGuid" id="PersonListString" type="hidden" /><div class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: block;"><div class="mCSB_draggerContainer"><div class="mCSB_draggerRail"></div></div></div></div>';
+
+
+                        $("#tablePosition").append($(htmlString));
+
+                        $("#tablePosition").fadeIn();
+
+
+                        $("#data-table-selection")
+                            .bootgrid({
+                                css: {
+                                    icon: 'zmdi icon',
+                                    iconColumns: 'zmdi-view-module',
+                                    iconDown: 'zmdi-expand-more',
+                                    iconRefresh: 'zmdi-refresh',
+                                    iconUp: 'zmdi-expand-less'
+                                },
+                                selection: true,
+                                multiSelect: false,
+                                rowSelect: true,
+                                keepSelection: true
+                            })
+                            .on("loaded.rs.jquery.bootgrid",
+                                function(e) {
+                                    /* your code goes here */
+                                    //Fix Click on Bootgrid
+                                    $("#data-table-selection div.checkbox")
+                                        .click(function() {
+                                            $(this).parent().parent().click();
+                                        });
+
+                                    //$("#sendForm").click(function() {
+                                    //    alert()
+                                    //    return false;
+                                    //});
+                                });
+
+
+                    });
+            }
+        }
+
+        //$("#sendForm").click(function() {
+
+        //    return false;
+        //});
+
+
+        function errorFunc1(e) {
+            console.log(e);
+        }
+
+
+        //Set Onchange of Post
+        $("#selectPost")
+            .change(function(e) {
+                var selectedPostId = $(this).val();
+                if (selectedOrganizationId)
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("GetPersons", "OutgoingLetters")',
+                        data: JSON.stringify({
+                            idList: selectedOrganizationId,
+                            postGuid: selectedPostId,
+                            noPost: false
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: successFunc1,
+                        error: errorFunc1
+                    });
+            });
+
+
+        $("#sendForm")
+            .click(function() {
+                if (!$("#ts1").is(":checked")) {
+                    $("#OrganizationsGuidString").val('' + selectedOrganizationId);
+                    $("#PersonListString")
+                        .val($("#data-table-selection")
+                            .bootgrid("getSelectedRows"));
+                } else {
+                    $("#selectPost").removeAttr('disabled').val(hiddenSelectedPost).selectpicker("refresh");
+                    $("#OrganizationsGuidString").val('' + hiddenSelectedOrganization);
+                    $("#PersonListString")
+                        .val('' + hiddenSelectedPerson);
+                }
+                console.log(hiddenSelectedPost + " " + hiddenSelectedOrganization + " " + hiddenSelectedPerson);
+                return true;
+            });
+
+    </script>
+
+    <script>
+        //Part 2 - tree view of Departments
+        //Binding json of this Departments from server
+        var json2 = @Html.Raw(Model.DepartmentJson);
+        var selectedDepartmentId = undefined;
+        //initial tree view
+        $("#treeview2")
+            .kendoTreeView({
+                //checkboxes: {
+                //    checkChildren: true
+                //},
+                checkboxes: true,
+                dataSource: json2,
+                //on check it will call onCheck Function - this would save state of selected nodes + ajax to manipulate bootgrid
+                check: onCheck2
+
+            });
+
+        // function that gathers IDs of checked nodes- this function is shared between all tree views
+        function checkedNodeIds(nodes, checkedNodes) {
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].checked) {
+                    checkedNodes.push(nodes[i].id);
+                }
+
+                if (nodes[i].hasChildren) {
+                    checkedNodeIds(nodes[i].children.view(), checkedNodes);
+                }
+            }
+        }
+
+        // show checked node IDs on datasource change + ajax to server for people list of those selected organizations
+        function onCheck2(e) {
+            var checkedNodes2 = [],
+                treeView = $("#treeview2").data("kendoTreeView"),
+                message;
+
+            //this seciton is for multiple select only
+            //checkedNodeIds(treeView.dataSource.view(), checkedNodes);
+
+            var dataItem = this.dataItem(e.node);
+
+            //Quick Fix for 1 selected item
+            if (dataItem.checked) {
+                checkedNodes2 = [dataItem.id];
+                selectedDepartmentId = checkedNodes2;
+            } else {
+                checkedNodes2 = [];
+                selectedDepartmentId = undefined;
+            }
+
+
+            var selectedDepartmentPostID = $("#selectDepartmentPost").val();
+
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetEmployees", "OutgoingLetters")',
+                data: JSON.stringify({
+                    idList: checkedNodes2,
+                    postGuid: selectedDepartmentPostID,
+                    noPost: $("#ts2").is(":checked")
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: successFunc2,
+                error: errorFunc2
+            });
+
+
+            var rootNodes = $("#treeview2").getKendoTreeView().dataSource.data();
+
+            traverse2(rootNodes,
+                function(node) {
+                    if (node != dataItem) {
+                        node.set("checked", false);
+                    }
+                });
+
+
+        }
+
+
+        function traverse2(nodes, callback) {
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                var children = node.hasChildren && node.children.data();
+
+                callback(node);
+
+                if (children) {
+                    traverse2(children, callback);
+                }
+            }
+        }
+
+        var hiddenSelectedDepartment = "";
+        var hiddenSelectedEmployee = "";
+        var hiddenSelectedDepartmentPost = "";
+
+        //Functions to ajax treeView2
+        function successFunc2(data, status) {
+            if ($("#ts2").is(":checked")&&selectedDepartmentId) {
+                $("#tablePositionDepartment")
+                    .fadeOut(function() {
+                        $("#tableSectionDepartment").remove();
+                        $("#tablePositionDepartment").html("");
+
+                        var rowcounter2 = 0;
+                        var htmlString =
+                            '<div id="tableSectionDepartment" class="table-responsive my-table-responsive c-overflow mCustomScrollbar _mCS_1 mCS-autoHide mCS-dir-rtl"><table id="data-table-selection-Department" class="table table-striped"><thead><tr><th data-column-id="id" data-visible="false" data-visible-in-selection="false">ID</th><th data-column-id="rowNumber2"  data-identifier="true">ردیف</th><th data-column-id="Name">نام و نام خانوادگی</th><th data-column-id="Post">سمت</th><th data-column-id="postID" data-visible="false" data-visible-in-selection="false">PostID</th><th data-column-id="departmentID" data-visible="false" data-visible-in-selection="false">DepartmentID</th></tr></thead><tbody>';
+                        data.forEach(function(item) {
+
+                            if(item.FirstName==null)
+                                item.FirstName = "";
+                            if(item.LastName==null)
+                                item.LastName = "";
+
+                            htmlString += '<tr><td>' +
+                                item.Id +
+                                '</td><td>' +
+                                ++rowcounter2 +
+                                '</td><td>' +
+                                item.FirstName +
+                                " " +
+                                item.LastName +
+                                '</td><td>' +
+                                item.Name +
+                                " " +
+                                item.departmentName +
+                                '</td><td>' +
+                                item.postID +
+                                '</td><td>' +
+                                item.departmentID +
+                                '</td></tr>';
+                        });
+
+                        htmlString +=
+                            '</tbody></table><input name="EmployeeGuid" id="EmployeeGuid" type="hidden" /><div class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: block;"><div class="mCSB_draggerContainer"><div class="mCSB_draggerRail"></div></div></div></div>';
+
+
+                        $("#tablePositionDepartment").append($(htmlString));
+
+                        $("#tablePositionDepartment").fadeIn();
+
+
+                        $("#data-table-selection-Department")
+                            .bootgrid({
+                                css: {
+                                    icon: 'zmdi icon',
+                                    iconColumns: 'zmdi-view-module',
+                                    iconDown: 'zmdi-expand-more',
+                                    iconRefresh: 'zmdi-refresh',
+                                    iconUp: 'zmdi-expand-less'
+                                },
+                                selection: true,
+                                multiSelect: false,
+                                rowSelect: true,
+                                keepSelection: true
+                            })
+                            .on("loaded.rs.jquery.bootgrid",
+                                function(e) {
+                                    /* your code goes here */
+                                    //Fix Click on Bootgrid
+                                    $("#data-table-selection-Department div.checkbox")
+                                        .click(function() {
+                                            $(this).parent().parent().click();
+                                        });
+
+                                    //Select and deselect if cant there is not specific input for post organization and person
+                                    $(this)
+                                        .on("selected.rs.jquery.bootgrid",
+                                            function(e, x) {
+                                                /* your code goes here */
+                                                hiddenSelectedEmployee = x[0].id;
+                                                hiddenSelectedDepartment = x[0].departmentID;
+                                                hiddenSelectedDepartmentPost = x[0].postID;
+                                            });
+
+                                    $(this)
+                                        .on("deselected.rs.jquery.bootgrid",
+                                            function(e, x) {
+                                                /* your code goes here */
+                                                hiddenSelectedEmployee = "";
+                                                hiddenSelectedDepartment = "";
+                                                hiddenSelectedDepartmentPost = "";
+                                            });
+
+                                });
+
+
+                    });
+            } else {
+                $("#tablePositionDepartment")
+                    .fadeOut(function() {
+                        $("#tableSectionDepartment").remove();
+                        $("#tablePositionDepartment").html("");
+
+
+                        var htmlString =
+                            '<div id="tableSectionDepartment" class="table-responsive my-table-responsive c-overflow mCustomScrollbar _mCS_1 mCS-autoHide mCS-dir-rtl"><table id="data-table-selection-Department" class="table table-striped"><thead><tr><th data-column-id="id" data-visible="false" data-visible-in-selection="false" data-identifier="true">ID</th><th data-column-id="Name">نام و نام خانوادگی</th></tr></thead><tbody>';
+                        data.forEach(function(item) {
+
+                            if(item.FirstName==null)
+                                item.FirstName = "";
+                            if(item.LastName==null)
+                                item.LastName = "";
+
+                            htmlString += '<tr><td>' +
+                                item.Id +
+                                '</td><td>' +
+                                item.FirstName +
+                                " " +
+                                item.LastName +
+                                '</td></tr>';
+                        });
+
+                        htmlString +=
+                            '</tbody></table><input name="EmployeeGuid" id="EmployeeGuid" type="hidden" /><div class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: block;"><div class="mCSB_draggerContainer"><div class="mCSB_draggerRail"></div></div></div></div>';
+
+
+                        $("#tablePositionDepartment").append($(htmlString));
+
+                        $("#tablePositionDepartment").fadeIn();
+
+
+                        $("#data-table-selection-Department")
+                            .bootgrid({
+                                css: {
+                                    icon: 'zmdi icon',
+                                    iconColumns: 'zmdi-view-module',
+                                    iconDown: 'zmdi-expand-more',
+                                    iconRefresh: 'zmdi-refresh',
+                                    iconUp: 'zmdi-expand-less'
+                                },
+                                selection: true,
+                                multiSelect: false,
+                                rowSelect: true,
+                                keepSelection: true
+                            })
+                            .on("loaded.rs.jquery.bootgrid",
+                                function(e) {
+                                    /* your code goes here */
+                                    //Fix Click on Bootgrid
+                                    $("#data-table-selection-Department div.checkbox")
+                                        .click(function() {
+                                            $(this).parent().parent().click();
+                                        });
+
+                                    //$("#sendForm").click(function() {
+                                    //    alert()
+                                    //    return false;
+                                    //});
+                                });
+
+
+                    });
+            }
+        }
+
+        //$("#sendForm").click(function() {
+
+        //    return false;
+        //});
+
+
+        function errorFunc2(e) {
+            console.log(e);
+        }
+
+
+        //Set Onchange of Post
+        $("#selectDepartmentPost")
+            .change(function(e) {
+                var selectedDepartmentPostId = $(this).val();
+                if (selectedDepartmentId)
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("GetEmployees", "OutgoingLetters")',
+                        data: JSON.stringify({
+                            idList: selectedDepartmentId,
+                            postGuid: selectedDepartmentPostId,
+                            noPost: false
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: successFunc2,
+                        error: errorFunc2
+                    });
+            });
+
+
+        $("#sendForm")
+            .click(function() {
+                if (!$("#ts2").is(":checked")) {
+                    $("#DepartmentGuid").val('' + selectedDepartmentId);
+                    $("#EmployeeGuid")
+                        .val($("#data-table-selection-Department")
+                            .bootgrid("getSelectedRows"));
+                } else {
+                    $("#selectDepartmentPost").removeAttr('disabled').val(hiddenSelectedDepartmentPost).selectpicker("refresh");
+                    $("#DepartmentGuid").val('' + hiddenSelectedDepartment);
+                    $("#EmployeeGuid")
+                        .val('' + hiddenSelectedEmployee);
+                    console
+                   .log(hiddenSelectedDepartmentPost + ' ' + hiddenSelectedDepartment + ' ' + hiddenSelectedEmployee);
+                }
+
+                return true;
+            });
+    </script>
+
+    <script type="text/javascript">
+        $(document)
+            .ready(function() {
+                //First initialization of person bootgrid to show server side returned people
+                $("#data-table-selection")
+                    .bootgrid({
+                        css: {
+                            icon: 'zmdi icon',
+                            iconColumns: 'zmdi-view-module',
+                            iconDown: 'zmdi-expand-more',
+                            iconRefresh: 'zmdi-refresh',
+                            iconUp: 'zmdi-expand-less'
+                        },
+                        selection: true,
+                        multiSelect: false,
+                        rowSelect: true,
+                        keepSelection: true
+                    })
+                    .on("loaded.rs.jquery.bootgrid",
+                        function(e) {
+                            /* your code goes here */
+                            //Fix Click on Bootgrid
+                            $("#data-table-selection div.checkbox")
+                                .click(function() {
+                                    $(this).parent().parent().click();
+                                });
+                        });
+
+                //First initialization of employee bootgrid to show server side returned employees
+                $("#data-table-selection-Department")
+                    .bootgrid({
+                        css: {
+                            icon: 'zmdi icon',
+                            iconColumns: 'zmdi-view-module',
+                            iconDown: 'zmdi-expand-more',
+                            iconRefresh: 'zmdi-refresh',
+                            iconUp: 'zmdi-expand-less'
+                        },
+                        selection: true,
+                        multiSelect: false,
+                        rowSelect: true,
+                        keepSelection: true
+                    })
+                    .on("loaded.rs.jquery.bootgrid",
+                        function(e) {
+                            /* your code goes here */
+                            //Fix Click on Bootgrid
+                            $("#data-table-selection-Department div.checkbox")
+                                .click(function() {
+                                    $(this).parent().parent().click();
+                                });
+                        });
+
+
+                //Handle Page Buttons
+                $("#SelectParentLetter")
+                    .click(function() {
+                        //window.open('/OutgoingLetters/Index?showSelect="true"&&selector=".demotextbox1",window.opener.document', 'demo', 'directories=no,titlebar=no,toolbar=0,location=0,status=0,menubar=0,scrollbars=yes,resizable=1,width=900,height=600');
+                        //swal("<iframe href=\"/OutgoingLetters/Index?showSelect=\"true\"&&selector=\".demotextbox1\",window.opener.document\"/>");
+                        //var appHTML =
+                        //    "<iframe width='850' height='600' src='/OutgoingLetters/Index?showSelect=true&&selector=\".demotextbox1\",window.parent.opener'/>";
+                        //swal({
+                        //    title: 'انتخاب نامه والد',
+                        //    html: true,
+                        //    customClass: 'swal-wide',
+                        //    showCancelButton: true,
+                        //    showConfirmButton:false
+                        //});
+
+                        ////swal("Cancelled");
+                        //$(".sweet-alert h2").html(appHTML);
+
+
+                        $("#test")
+                            .bPopup({
+                                content: 'iframe', //'ajax', 'iframe' or 'image'
+                                contentContainer: '.content'
+                                //loadUrl: 'http://dinbror.dk/blog' //Uses jQuery.load()
+                            });
+
+                        return false;
+                    });
+
+                function htmlEncode(value) {
+                    return $('<div/>').text(value).html();
+                }
+
+                $("#sendForm")
+                    .click(function() {
+                        //$("#EmployeeGuid")
+                        //    .val($("#data-table-selection-Department")
+                        //        .bootgrid("getSelectedRows"));
+
+                        //$("#PersonListString")
+                        //    .val($("#data-table-selection")
+                        //        .bootgrid("getSelectedRows"));
+
+
+                        $("#Body").val(htmlEncode($(".note-editable").html()));
+                        //$("#InputCases").val($('#SelectedCases').val());
+
+                    });
+
+                //remove parent section
+                $("#removeParent")
+                    .click(function() {
+
+                        $(this)
+                            .fadeOut(function() {
+                                $("#ParentletterId").val("");
+                                $(".demotextbox1").text("");
+                            });
+                    });
+
+
+                //Turn off Post
+                $("#ts1")
+                    .change(function() {
+                        if ($(this).is(":checked")) {
+                            $("#selectPost").attr('disabled', true).selectpicker("refresh");
+                            if (selectedOrganizationId) {
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: '@Url.Action("GetPersons", "OutgoingLetters")',
+                                    data: JSON.stringify({
+                                        idList: selectedOrganizationId,
+                                        postGuid: "",
+                                        noPost: true
+                                    }),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: successFunc1,
+                                    error: errorFunc1
+                                });
+                            }
+
+                        } else {
+                            $("#selectPost").removeAttr('disabled').selectpicker("refresh").change();
+                        }
+                    });
+
+                //Turn off Post
+                $("#ts2")
+                    .change(function() {
+                        if ($(this).is(":checked")) {
+                            $("#selectDepartmentPost").attr('disabled', true).selectpicker("refresh");
+                            if (selectedDepartmentId) {
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: '@Url.Action("GetEmployees", "OutgoingLetters")',
+                                    data: JSON.stringify({
+                                        idList: selectedDepartmentId,
+                                        postGuid: "",
+                                        noPost: true
+                                    }),
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: successFunc2,
+                                    error: errorFunc2
+                                });
+                            }
+
+                        } else {
+                            $("#selectDepartmentPost").removeAttr('disabled').selectpicker("refresh").change();
+                        }
+                    });
+
+                //Logic of rownumber
+                $("#autoRowNumber").change(function() {
+                    if ($(this).is(":checked")) {
+                        $(this).val(true);
+                        $("#RowNumber").attr('disabled', true).selectpicker("refresh");
+                    } else {
+                        $(this).val(false);
+                        $("#RowNumber").removeAttr('disabled').selectpicker("refresh");
+                    }
+                });
+
+                $("#LetterDateTime").val('@DateTime.Now.ToPersianTime()');
+
+            });
+    </script>
+
+    <style>
+        #treeview1 {
+            height: 630px;
+            padding: 10px;
+        }
+
+        #treeview2 {
+            height: 630px;
+            padding: 10px;
+        }
+
+            #treeview1 .k-sprite, #treeview2 .k-sprite {
+                background-image: url("../img/coloricons-sprite.png");
+            }
+
+        .rootfolder {
+            background-position: 0 0;
+        }
+
+        .folder {
+            background-position: 0 -16px;
+        }
+
+        .pdf {
+            background-position: 0 -32px;
+        }
+
+        .html {
+            background-position: 0 -48px;
+        }
+
+        .image {
+            background-position: 0 -64px;
+        }
+
+        .demo-section {
+            direction: ltr;
+        }
+
+        .my-table-responsive {
+            height: 650px;
+        }
+
+        .demo-section #treeview1, .demo-section #treeview2 {
+            background-color: #f4f4f4;
+        }
+
+
+        /* RTL TreeView*/
+        #treeview1, #treeview2 {
+            direction: rtl;
+        }
+
+        .k-icon.k-minus, .k-icon.k-plus {
+            margin-left: 0;
+        }
+
+        .k-group > .k-item {
+            margin-right: 16px !important;
+        }
+
+            .k-group > .k-item.k-first.k-last {
+                margin-right: 0 !important;
+            }
+
+        .k-group .k-item .k-group {
+            margin-right: 16px;
+        }
+
+        .k-item.k-first.k-last .k-top {
+            margin-right: 0;
+        }
+
+        .k-treeview1 .k-sprite, .k-treeview1 .k-image {
+            margin-left: 5px;
+        }
+    </style>
+}
+
+
+

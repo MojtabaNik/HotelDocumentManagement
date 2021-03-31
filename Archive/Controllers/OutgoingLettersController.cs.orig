@@ -1,0 +1,148 @@
+﻿using BusinessModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Archive.ViewModel;
+using System.Text;
+using EntityModel;
+using System.IO;
+using DBProvider;
+namespace Archive.Controllers
+{
+    public class OutgoingLettersController : Controller
+    {
+        // GET: IncomingLetters
+        public ActionResult Index(string Case = null, string Content = null)
+        {
+            SendLetterManager Slm = new SendLetterManager();
+            OutgoingLettersViewModel Olv = new OutgoingLettersViewModel();
+            StringBuilder stb = new StringBuilder();
+
+            stb.Append("");
+
+            if (Case != null)
+                stb.Append($"Case == {Case} &&");
+
+            if (Content != null)
+                stb.Append($"Content == {Content} &&");
+
+            stb.Append("1==1");
+
+
+            //System.Linq.Expressions.Expression<System.Func<EntityModel.ReceivedLetter, bool>> exp = new System.Linq.Expressions.Expression<Func<ReceivedLetter, bool>>();
+
+            Olv.ListSendLetters = Slm.Read(stb.ToString(), "Owner,ParentSendLetter").ToList();
+            return View(Olv);
+        }
+
+        public ActionResult CreateNewLetter()
+        {
+            OutgoingLettersViewModel Olvm = new OutgoingLettersViewModel();
+            return View(Olvm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateNewLetter(OutgoingLettersViewModel outgoingLettersViewModel)
+        {
+            SendLetterManager sendLetterManager = new SendLetterManager();
+            if (outgoingLettersViewModel.fileUploadLetters != null && outgoingLettersViewModel.fileUploadLetters.Count > 0)
+            {
+                MemoryStream target = new MemoryStream();
+<<<<<<< HEAD
+                outgoingLettersViewModel.sendLetter.sendLetterFiles = new List<SendLetterFile>();
+                SendLetterFile sendLetterFile;
+                foreach (var item in outgoingLettersViewModel.fileUploadLetters)
+                {
+                    target = new MemoryStream();
+                    sendLetterFile = new SendLetterFile();
+                    item.InputStream.CopyTo(target);
+                    sendLetterFile.File = new ArchiveFile();
+                    sendLetterFile.File.Content = target.ToArray();
+                    sendLetterFile.File.Name = item.FileName;
+                    sendLetterFile.File.ContentType = item.ContentType;
+                    outgoingLettersViewModel.sendLetter.sendLetterFiles.Add(sendLetterFile);
+=======
+                Olvm.sendLetter.sendLetterFiles = new List<SendLetterFile>();
+                foreach (var item in Olvm.fileUploadLetters)
+                {
+                    target = new MemoryStream();
+                    SendLetterFile sLfile = new SendLetterFile();
+                    item.InputStream.CopyTo(target);
+                    sLfile.File = new ArchiveFile();
+                    sLfile.File.Content = target.ToArray();
+                    sLfile.File.Name = item.FileName;
+                    sLfile.File.ContentType = item.ContentType;
+                    Olvm.sendLetter.sendLetterFiles.Add(sLfile);
+>>>>>>> 71c8f43f3b31aa7b2dec26f1b3f6a3e39c4fe481
+                }
+            }
+            if (outgoingLettersViewModel.fileUploadAppendages != null && outgoingLettersViewModel.fileUploadAppendages.Count > 0)
+            {
+                MemoryStream target = new MemoryStream();
+                outgoingLettersViewModel.sendLetter.Appendages = new List<SendAppendage>();
+                SendAppendage RAfile;
+                foreach (var item in outgoingLettersViewModel.fileUploadAppendages)
+                {
+                    target = new MemoryStream();
+                    RAfile = new SendAppendage();
+                    item.InputStream.CopyTo(target);
+                    RAfile.File = new ArchiveFile();
+                    RAfile.File.Content = target.ToArray();
+                    RAfile.File.Name = item.FileName;
+                    RAfile.File.ContentType = item.ContentType;
+                    outgoingLettersViewModel.sendLetter.Appendages.Add(RAfile);
+                }
+
+            }
+            outgoingLettersViewModel.sendLetter.ArchiveDateTime = DateTime.Now;
+            outgoingLettersViewModel.sendLetter.LetterDateTime = DateTime.Now;
+            outgoingLettersViewModel.sendLetter.LastModifyDateTime = DateTime.Now;
+            sendLetterManager.Add(outgoingLettersViewModel.sendLetter);
+                      
+            ActivityLogManager activityLogManager = new ActivityLogManager();
+            activityLogManager.Add(new ActivityLog {RowId=outgoingLettersViewModel.sendLetter.LetterId, TableName="ReceiveLetter",Action=action.Create,Description= $"Create new outgoing Letter with row number :{outgoingLettersViewModel.sendLetter.RowNumber}",User=outgoingLettersViewModel.sendLetter.User });
+            sendLetterManager.saveChanges();
+            activityLogManager.saveChanges();
+            return RedirectToAction("Index");
+        }
+        //public ActionResult CreateNewLetter(OutgoingLettersViewModel Olvm)
+        //{
+        //    SendLetterManager Rlm = new SendLetterManager();
+        //    if (Olvm.fileUploadLetters != null )
+        //    {
+        //        MemoryStream target = new MemoryStream();
+        //        Olvm.sendLetter.sendLetterFiles = new List<SendLetterFile>();
+        //        SendLetterFile SLfile;
+        //            target = new MemoryStream();
+        //            SLfile = new SendLetterFile();
+        //            Olvm.fileUploadLetters.InputStream.CopyTo(target);
+        //            SLfile.File.Content = target.ToArray();
+        //            SLfile.File.Name = Olvm.fileUploadLetters.FileName;
+        //            SLfile.File.ContentType = Olvm.fileUploadLetters.ContentType;
+        //            Olvm.sendLetter.sendLetterFiles.Add(SLfile);               
+        //    }
+        //    if (Olvm.fileUploadAppendages != null)
+        //    {
+        //        MemoryStream target = new MemoryStream();
+        //        Olvm.sendLetter.Appendage = new List<SendAppendage>();
+        //        SendAppendage RAfile;      
+        //            target = new MemoryStream();
+        //            RAfile = new SendAppendage();
+        //            Olvm.fileUploadAppendages.InputStream.CopyTo(target);
+        //            RAfile.File.Content = target.ToArray();
+        //            RAfile.File.Name = Olvm.fileUploadAppendages.FileName;
+        //            RAfile.File.ContentType = Olvm.fileUploadAppendages.ContentType;
+        //            Olvm.sendLetter.Appendage.Add(RAfile);
+        //    }
+        //    Rlm.Add(Olvm.sendLetter);
+        //    Rlm.saveChanges();
+        //    return View("Index");
+        //}
+        public ActionResult UpdateSpecificLetter()
+        {
+            return View();
+        }
+    }
+}

@@ -1,0 +1,469 @@
+﻿@using Archive.ViewModel;
+@model BaseViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9"><![endif]-->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <!-- Vendor CSS -->
+    @Styles.Render("~/Content/vendors/bower_components")
+
+    @RenderSection("BowerComponents", false)
+
+    <!-- CSS -->
+    @Styles.Render("~/Content/css")
+
+    @RenderSection("HeadCss", false)
+
+    <style>
+        body {
+            font-family: IRANSans !important;
+        }
+    </style>
+
+</head>
+<body>
+    <header id="header" class="clearfix" data-current-skin="blue">
+
+        <ul class="header-inner">
+            <li id="menu-trigger" data-trigger="#sidebar">
+                <div class="line-wrap">
+                    <div class="line top"></div>
+                    <div class="line center"></div>
+                    <div class="line bottom"></div>
+
+                </div>
+            </li>
+
+            <li class="logo hidden-xs">
+                <a href="#">سیستم بایگانی نامه های هتل آریوبرزن</a>
+            </li>
+
+            <li class="pull-left">
+                <ul class="top-menu">
+                    <li id="toggle-width">
+                        <div class="toggle-switch">
+                            <input id="tw-switch" type="checkbox" hidden="hidden">
+                            <label for="tw-switch" class="ts-helper"></label>
+                        </div>
+                    </li>
+
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" href="">
+                            <i class="tm-icon zmdi zmdi-email"></i>
+                            <i class="tmn-counts">6</i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-left dropdown-menu-lg pull-right">
+                            <div class="listview">
+                                <div class="lv-header">
+                                    پیام های شما
+                                </div>
+                                <div class="lv-body">
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/1.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">مسعود درویشیان</div>
+                                                <small class="lv-small">این برنامه بسیار زیبا می باشد</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/2.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">مجتبی نیکونژاد</div>
+                                                <small class="lv-small">من این برنامه را خیلی دوست دارم</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/3.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">احمد حمزوی</div>
+                                                <small class="lv-small">من از این برنامه بسیار راضی هستم</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/4.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">علیرضا دهقانیان</div>
+                                                <small class="lv-small">ای کاش همچین برنامه هایی از شما بیشتر ببینیم</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/4.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">محمد حسن رحمانی</div>
+                                                <small class="lv-small">نقاش را گفتمش نقشی بکش بر زندگی</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <a class="lv-footer" href="">مشاهده همه</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" href="">
+                            <i class="tm-icon zmdi zmdi-notifications"></i>
+                            <i class="tmn-counts">9</i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-left dropdown-menu-lg pull-right">
+                            <div class="listview">
+                                <div class="lv-header">
+                                    هشدار ها
+                                </div>
+                                <div class="lv-body">
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/1.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">مسعود درویشیان</div>
+                                                <small class="lv-small">این برنامه بسیار زیبا می باشد</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/2.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">مجتبی نیکونژاد</div>
+                                                <small class="lv-small">من این برنامه را خیلی دوست دارم</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/3.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">احمد حمزوی</div>
+                                                <small class="lv-small">من از این برنامه بسیار راضی هستم</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/4.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">علیرضا دهقانیان</div>
+                                                <small class="lv-small">ای کاش همچین برنامه هایی از شما بیشتر ببینیم</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a class="lv-item" href="">
+                                        <div class="media">
+                                            <div class="pull-right">
+                                                <img class="lv-img-sm" src="~/img/profile-pics/4.jpg" alt="">
+                                            </div>
+                                            <div class="media-body">
+                                                <div class="lv-title">محمد حسن رحمانی</div>
+                                                <small class="lv-small">نقاش را گفتمش نقشی بکش بر زندگی</small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <a class="lv-footer" href="">مشاهده همه</a>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" href=""><i class="tm-icon zmdi zmdi-more-vert"></i></a>
+                        <ul class="dropdown-menu dropdown-menu-left  dm-icon pull-right">
+                            <li class="skin-switch hidden-xs">
+                                <span class="ss-skin bgm-lightblue" data-skin="lightblue"></span>
+                                <span class="ss-skin bgm-bluegray" data-skin="bluegray"></span>
+                                <span class="ss-skin bgm-cyan" data-skin="cyan"></span>
+                                <span class="ss-skin bgm-teal" data-skin="teal"></span>
+                                <span class="ss-skin bgm-orange" data-skin="orange"></span>
+                                <span class="ss-skin bgm-blue" data-skin="blue"></span>
+                            </li>
+                            <li class="divider hidden-xs"></li>
+                            <li class="hidden-xs">
+                                <a data-action="fullscreen" href=""><i class="zmdi zmdi-fullscreen"></i> تمام صفحه</a>
+                            </li>
+                            <li>
+                                <a data-action="clear-localstorage" href=""><i class="zmdi zmdi-delete"></i>تنظیمات پیش فرض</a>
+                            </li>
+                            <li>
+                                <a href=""><i class="zmdi zmdi-settings"></i>تنظیمات دیگر</a>
+                            </li>
+                            <li>
+                                <a href="~/Logout"><i class="zmdi zmdi-sign-in zmdi-hc-fw"></i>خروج</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+
+        <!-- Top Search Content -->
+        <div id="top-search-wrap">
+            <div class="tsw-inner">
+                <i id="top-search-close" class="zmdi zmdi-arrow-left"></i>
+                <input type="text">
+            </div>
+        </div>
+    </header>
+
+    <section id="main" data-layout="layout-1">
+        <aside id="sidebar" class="sidebar c-overflow">
+            <div class="profile-menu">
+                <a href="#">
+                    <div class="profile-pic">
+                        <img src="~/img/profile-pics/2.jpg" alt="">
+                    </div>
+
+                    <div class="profile-info">
+                        @if (Sessions.CurrentUser != null)
+                        {
+                            @Html.Raw(Sessions.CurrentUser.FullName())
+                            ;
+                        }
+                        else
+                        {
+                            Response.Redirect("~/Logout");
+                        }
+
+
+                        <i class="zmdi zmdi-caret-down"></i>
+                    </div>
+                </a>
+
+                <ul class="main-menu">
+                    <li>
+                        <a href="#"><i class="zmdi zmdi-account"></i>مشاهده پروفایل</a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="zmdi zmdi-settings"></i>تنظیمات</a>
+                    </li>
+                    <li>
+                        <a href="~/Logout"><i class="zmdi zmdi-sign-in zmdi-hc-fw"></i>خروج</a>
+                    </li>
+                </ul>
+            </div>
+            <ul class="main-menu">
+                <li id="Dashboard">
+                    <a href="~/Dashboard"><i class="zmdi zmdi-home"></i>داشبورد</a>
+                </li>
+                <li class="sub-menu">
+                    <a href="#"><i class="zmdi zmdi-email-open zmdi-hc-fw"></i>نامه های ورودی</a>
+
+                    <ul>
+                        <li id="IncomingArchive"><a href="~/IncomingLetters/Add">بایگانی</a></li>
+                        <li id="IncomingShowAll"><a href="~/IncomingLetters">مشاهده</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="#"><i class="zmdi zmdi-email zmdi-hc-fw"></i>نامه های خروجی</a>
+                    <ul>
+                        <li id="CreateLetter">
+                            <a href="~/OutgoingLetters/Add">ایجاد نامه</a>
+                        </li>
+                        <li id="ShowOutgoingLetters">
+                            <a href="~/OutgoingLetters">مشاهده</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="#"><i class="zmdi zmdi-search-in-file zmdi-hc-fw"></i>جستجوی نامه ها</a>
+
+                    <ul>
+                        @*<li><a href="#">همه ی پارامترها</a></li>
+                        <li><a href="#">پرونده ها</a></li>
+                        <li><a href="#">سازمان ها</a></li>*@
+                        <li id="IncomingAndOutgoings"><a href="~/AdvanceSearch">ورودی و خروجی</a></li>
+                        <li><a href="~/IncomingLetters">ورودی</a></li>
+                        <li><a href="~/OutgoingLetters">خروجی</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="#"><i class="zmdi zmdi-collection-text zmdi-hc-fw"></i>دسته ها</a>
+                    <ul>
+                        <li id="Organization"><a href="~/Organization">سازمان ها</a></li>
+                        <li id="Cases"><a href="~/Case">پرونده ها</a></li>
+                        <li id="Department"><a href="~/Department">دپارتمان ها</a></li>
+                        <li id="Post"><a href="~/Post">سمت ها</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="#"><i class="zmdi zmdi-accounts-alt zmdi-hc-fw"></i>مدیریت اشخاص</a>
+                    <ul>
+                        <li id="AddPerson"><a href="~/Person/Add">افزودن</a></li>
+                        <li id="ShowPeople"><a href="~/Person">مشاهده</a></li>
+                    </ul>
+                </li>
+                <li class="sub-menu">
+                    <a href="#"><i class="zmdi zmdi-accounts-outline zmdi-hc-fw"></i>مدیریت کارمندان</a>
+                    <ul>
+                        <li id="AddEmployee"><a href="~/Employee/Add">افزودن</a></li>
+                        <li id="ShowEmployee"><a href="~/Employee">مشاهده</a></li>
+                    </ul>
+                </li>
+                @if (Sessions.IsAdmin)
+                {
+                    <li class="sub-menu">
+                        <a href="#"><i class="zmdi zmdi-accounts zmdi-hc-fw"></i>مدیریت کاربران</a>
+                        <ul>
+                            <li id="AddUser"><a href="~/User/Add">افزودن</a></li>
+                            <li id="ShowUsers"><a href="~/User">مشاهده</a></li>
+                        </ul>
+                    </li>
+                    <li id="Template">
+                        <a href="~/Template"><i class="zmdi zmdi-settings zmdi-hc-fw"></i>قالب نامه ها</a>
+                    </li>
+                }
+                <li id="Profile">
+                    <a href="#"><i class="zmdi zmdi-account-circle zmdi-hc-fw"></i>پروفایل</a>
+                </li>
+                <li id="Settings">
+                    <a href="~/settings"><i class="zmdi zmdi-settings zmdi-hc-fw"></i>تنظیمات</a>
+                </li>
+
+                <li id="AboutUs"><a href="#"><i class="zmdi zmdi-info zmdi-hc-fw"></i>درباره</a></li>
+                <li>
+                    <a href="~/Logout"><i class="zmdi zmdi-sign-in zmdi-hc-fw"></i>خروج</a>
+                </li>
+            </ul>
+        </aside>
+        <section id="content">
+            <div class="container">
+                <div class="block-header">
+                    <h2>@ViewBag.Title</h2>
+
+                </div>
+                <div class="card">
+                    <div class="card-body card-padding">
+                        @RenderBody()
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </section>
+
+    <footer id="footer">
+        <div style="direction:ltr;text-align:center;">
+            &copy; @DateTime.Now.Year Xbit Software
+        </div>
+    </footer>
+
+    <!-- Page Loader -->
+    <div class="page-loader">
+        <div class="preloader pls-blue" style="text-align:center;">
+            <svg class="pl-circular" viewBox="25 25 50 50">
+                <circle class="plc-path" cx="50" cy="50" r="20" />
+            </svg>
+
+            <p>لطفا اندکی تامل نمایید...</p>
+        </div>
+    </div>
+
+    <!-- Older IE warning message -->
+    <!--[if lt IE 9]>
+        <div class="ie-warning">
+            <h1 class="c-white">Warning!!</h1>
+            <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
+            <div class="iew-container">
+                <ul class="iew-download">
+                    <li>
+                        <a href="http://www.google.com/chrome/">
+                            <img src="img/browsers/chrome.png" alt="">
+                            <div>Chrome</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.mozilla.org/en-US/firefox/new/">
+                            <img src="img/browsers/firefox.png" alt="">
+                            <div>Firefox</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://www.opera.com">
+                            <img src="img/browsers/opera.png" alt="">
+                            <div>Opera</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.apple.com/safari/">
+                            <img src="img/browsers/safari.png" alt="">
+                            <div>Safari</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                            <img src="img/browsers/ie.png" alt="">
+                            <div>IE (New)</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <p>Sorry for the inconvenience!</p>
+        </div>
+    <![endif]-->
+    <!-- Javascript Libraries -->
+    @Scripts.Render("~/bundles/js")
+    @RenderSection("Scripts", false)
+    @Scripts.Render("~/bundles/ourJS")
+    @RenderSection("OurScripts", false)
+    @*<script src="~/jalali.js"></script>*@
+    <script>
+        //$("body").persiaNumber();
+    </script>
+
+
+    <!-- Placeholder for IE9 -->
+    <!--[if IE 9 ]>
+        <script src="vendors/bower_components/jquery-placeholder/jquery.placeholder.min.js"></script>
+    <![endif]-->
+    <script>
+        $(function () {
+            //Code for setting toggle and menu activation
+            var element = $("#@Model.PageId");
+
+            if ($(element).parent().parent("li.sub-menu").length > 0) {
+                $(element).children("a").addClass("active");
+                $(".active").parent().parent().parent("li.sub-menu").addClass("active toggled");
+            } else {
+                $(element).addClass("active");
+            }
+
+
+        });
+    </script>
+
+
+</body>
+</html>

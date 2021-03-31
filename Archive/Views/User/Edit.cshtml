@@ -1,0 +1,281 @@
+﻿@using Archive.ViewModel;
+@model EditUserViewModel
+@{
+    ViewBag.Title = "ویرایش کاربر ";
+
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+}
+@section HeadCss{
+    <style>
+        .fileinput .thumbnail {
+            right: -40px;
+        }
+    </style>
+}
+
+
+<form action="~/User/Edit" method="post" enctype="multipart/form-data">
+    @*@Html.AntiForgeryToken()*@
+    <input type="hidden" name="user.Id" value="@Model.user.Id" />
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="user.FirstName" type="text" class="form-control" value="@Model.user.FirstName">
+                    <label class="fg-label">نام</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="user.LastName" type="text" class="form-control" value="@Model.user.LastName">
+                    <label class="fg-label">نام خانوادگی</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="user.PhoneNumber" type="text" class="form-control" value="@Model.user.PhoneNumber">
+                    <label class="fg-label">شماره ثابت</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="user.MobileNumber" type="text" class="form-control" value="@Model.user.MobileNumber">
+                    <label class="fg-label">شماره همراه</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="user.Address" type="text" class="form-control" value="@Model.user.Address">
+                    <label class="fg-label">آدرس</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="user.Email" type="text" class="form-control" value="@Model.user.Email">
+                    <label class="fg-label">ایمیل</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-sm-6">
+            <div class="row">
+                <div class="col-sm-4 m-b-25">
+                    <p class="f-500 m-b-15 c-black">جنسیت</p>
+
+                    <select name="user.Gender" class="selectpicker">
+                        @if (@Model.user.Gender == Gender.Femail)
+                        {
+                            <option selected="selected" value="0">زن</option>
+                            <option value="1">مرد</option>
+                        }
+                        else
+                        {
+                            <option value="0">زن</option>
+                            <option selected="selected" value="1">مرد</option>
+                        }
+
+                    </select>
+                </div>
+                <div class="col-sm-8">
+                    <p class="c-black f-500 m-b-20">تاریخ تولد</p>
+
+                    <div class="input-group form-group">
+                        <span class="input-group-addon"><i class="zmdi zmdi-calendar"></i></span>
+                        <div class="dtp-container fg-line">
+
+                            @if (Model.user.BirthDay != null)
+                            {
+                                <input name="BirthDay" type="text" class="form-control date-picker" placeholder="Click here..." value="@DBProvider.Utilities.ToPersianTime((DateTime) Model.user.BirthDay)">
+                            }
+                            else
+                            {
+                                <input name="BirthDay" type="text" class="form-control date-picker" placeholder="Click here..." value="">
+                            }
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-sm-4 m-b-25">
+                        <p class="f-500 m-b-15 c-black">نقش</p>
+
+                        <select name="user.Gender" class="selectpicker">
+                            <option selected="selected" value="0">زن</option>
+                            <option value="1">مرد</option>
+                            <option value="0">زن</option>
+                            <option selected="selected" value="1">مرد</option>
+                        </select>
+                    </div>*@
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-centered">
+                    <p>انتخاب تصویر</p>
+                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                        <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="line-height: 150px;">
+                            <img src="@Model.user.GetAvatar()" />
+                        </div>
+                        <div>
+                            <span class="btn btn-info btn-file waves-effect">
+                                <span class="fileinput-new">انتخاب تصویر</span>
+                                <span class="fileinput-exists">تغییر</span>
+                                <input type="hidden" value="" name="..."><input id="upload" type="file" name="fileUpload">
+                                <input id="shouldImageChange" type="hidden" name="Flag" value="false">
+                            </span>
+                            <a id="removeImage" href="#" class="btn btn-danger fileinput-exists waves-effect" data-dismiss="fileinput">حذف</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <input id="Summary" type="text" name="user.Summary" style="display:none" value="@Model.user.Summary" />
+            <div class="html-editor" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-sm-3">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="user.UserName" type="text" class="form-control" value="@Model.user.UserName">
+                    <label class="fg-label">نام کاربری</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="user.password" type="password" class="form-control">
+                    <label class="fg-label">کلمه عبور</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input name="repeatPassword" type="password" class="form-control">
+                    <label class="fg-label">تکرار کلمه عبور</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <p class="f-500 m-b-15 c-black">نقش</p>
+
+            <select name="user.IsAdmin" class="selectpicker">
+                @if (Model.user.IsAdmin)
+                {
+                    <option value="false">معمولی</option>
+                    <option selected="selected" value="true">مدیر سیستم </option>
+                }
+                else
+                {
+                    <option selected="selected" value="false">معمولی</option>
+                    <option value="true">مدیر سیستم </option>
+                }
+            </select>
+        </div>
+    </div>
+
+
+    <hr class="hr-color" />
+    <div class="row">
+        <div class="col-lg-4"></div>
+        <div class="col-lg-8">
+            <div class="row">
+                <div class="col-lg-2">
+                    <button id="sendForm" type="submit" class="btn  bgm-green btn-lg waves-effect">ویرایش کاربر</button>
+                </div>
+                <div class="col-lg-5">
+                    @if (@Model.user.IsActive())
+                    {
+                        <button type="submit" class="btn bgm-red btn-lg waves-effect" style="margin-right: 10px">غیرفعال کردن کاربر</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn bgm-red btn-lg waves-effect" style="margin-right: 10px">فعال کردن کاربر</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts{
+
+
+    @*<script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+        <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>*@
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+
+
+
+}
+
+@section OurScripts{
+
+    <script>
+        $(function () {
+            if ($("#Summary").val() != "") {
+                var html = htmlDecode($("#Summary").val());
+
+                $(".html-editor").first().code(html);
+            }
+
+            $("#sendForm").click(function () {
+                $("#Summary").val(htmlEncode($(".html-editor").first().code()));
+                return true;
+            });
+
+            $("#removeImage").click(function () {
+                $("#shouldImageChange").val("true");
+
+            });
+        });
+        function htmlEncode(value) {
+            return $('<div/>').text(value).html();
+        }
+        function htmlDecode(value) {
+            return $('<div/>').html(value).text();
+        }
+    </script>
+
+}

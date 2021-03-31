@@ -1,0 +1,316 @@
+﻿@using Archive.ViewModel;
+@model SettingsViewModel
+
+@{
+    ViewBag.Title = "تنظیمات کاربری";
+}
+
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/animate.css/animate.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/bootstrap-sweetalert/lib/sweet-alert.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet">
+    <link href="~/vendors/bootgrid/jquery.bootgrid.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+}
+
+@section HeadCss {
+    <link href="~/css/KendoUI/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.rtl.min.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.default.min.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.default.min.css" rel="stylesheet" />
+}
+<form action="~/Settings/Edit" method="post">
+    @Html.AntiForgeryToken()
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-xs-5 tree-view-box">
+            <div class="demo-section k-content">
+                <div>
+                    <div class="card-header" dir="rtl">
+                        <h2>
+                            سازمان هایی که نمی خواهید برای شما قابل مشاهده باشند:
+                        </h2>
+                    </div>
+                    <div id="treeview"></div>
+                    <input id="organizationList" name="OrganizationFilterString" type="hidden" value="@Model.OrganizationFilterString" />
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-7">
+            <div class="">
+                <div class="card-header">
+                    <h2>
+                        اشخاصی که می خواهید برای شما قابل مشاهده نباشند:
+                    </h2>
+                </div>
+
+                <div class="table-responsive my-table-responsive c-overflow mCustomScrollbar _mCS_1 mCS-autoHide mCS-dir-rtl">
+                    <table id="data-table-selection" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th data-column-id="id" data-visible="false" data-visible-in-selection="false" data-identifier="true">ID</th>
+                                <th data-column-id="Name">نام و نام خانوادگی</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.People)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+
+                                    @*<td>@{item.ParentReceiveLetter != null ? item.ParentReceiveLetter.Id : 0}</td>*@
+                                    <td>
+                                        @item.FullName()
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                    <input name="PersonFilterString" id="PersonList" type="hidden" value="@Model.PersonFilterString" />
+                    <div id="mCSB_1_scrollbar_vertical" class="mCSB_scrollTools mCSB_1_scrollbar mCS-minimal-dark mCSB_scrollTools_vertical" style="display: block;">
+                        <div class="mCSB_draggerContainer">
+                            <div class="mCSB_draggerRail"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-2 col-centered">
+            <button id="save" type="submit" class="btn bgm-red btn-lg waves-effect">ذخیره تغییرات</button>
+        </div>
+    </div>
+
+</form>
+
+@section Scripts{
+
+}
+
+@section OurScripts {
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+    <script src="~/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+    <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>
+
+    <script src="~/js/kendo.all.min.js"></script>
+    <script src="~/js/console.js"></script>
+
+
+    <script>
+
+        var json = @Html.Raw(Model.OrganizationJson);
+        $("#treeview")
+            .kendoTreeView({
+                checkboxes: {
+                    checkChildren: true
+                },
+
+                check: onCheck,
+
+                dataSource: json
+            });
+
+
+
+        var treeview = $("#treeview").data("kendoTreeView");
+        @foreach (var i in Model.FilterOrganizations)
+        {
+            <text>
+        var getitem = treeview.dataSource.get("@i.Id");
+        var item = treeview.findByUid(getitem.uid);
+        treeview.dataItem(item).set("checked", true);
+        </text>
+        }
+
+        // function that gathers IDs of checked nodes
+        function checkedNodeIds(nodes, checkedNodes) {
+            for (var i = 0; i < nodes.length; i++) {
+                if (nodes[i].checked) {
+                    checkedNodes.push(nodes[i].id);
+                }
+
+                if (nodes[i].hasChildren) {
+                    checkedNodeIds(nodes[i].children.view(), checkedNodes);
+                }
+            }
+        }
+
+        // show checked node IDs on datasource change
+        function onCheck() {
+            var checkedNodes = [],
+                treeView = $("#treeview").data("kendoTreeView"),
+                message;
+
+            checkedNodeIds(treeView.dataSource.view(), checkedNodes);
+
+            //if (checkedNodes.length > 0) {
+            //    message = "IDs of checked nodes: " + checkedNodes.join(",");
+            //} else {
+            //    message = "No nodes checked.";
+            //}
+
+            //$("#result").html(message);
+
+            $("#save").click(function() {
+                $("#organizationList").val(checkedNodes);
+                return true;
+            });
+        }
+
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Selection
+            var x = [];
+            @foreach (var item in Model.FilterPersons)
+            {
+                <text> x.push("@item.Id"); </text>
+            }
+
+            $("#data-table-selection")
+                .bootgrid({
+                    css: {
+                        icon: 'zmdi icon',
+                        iconColumns: 'zmdi-view-module',
+                        iconDown: 'zmdi-expand-more',
+                        iconRefresh: 'zmdi-refresh',
+                        iconUp: 'zmdi-expand-less'
+                    },
+
+                    selection: true,
+                    multiSelect: true,
+                    rowSelect: true,
+                    keepSelection: true,
+                    labels: {
+                        noResults: "!!هیچ موردی یافت نشد",
+                        infos: "نمایش {{ctx.start}} تا {{ctx.end}} از {{ctx.total}}",
+                        search: "جستجو",
+                        all: "نمایش همه"
+                    }
+                })
+                .on("loaded.rs.jquery.bootgrid",
+                    function(e) {
+                        //ids[0] = "73970e95-6144-e611-92ec-305a3a45649d";
+
+                        $("#data-table-selection")
+                            .bootgrid("select", x);
+                    });
+            //    .on("selected.rs.jquery.bootgrid", function(e, arr) {
+            //    var found = y.some(function (el) {
+            //        return el === arr[0].id;
+            //    });
+            //    if (!found) {
+            //        y.push(arr[0].id);
+            //    }
+            //}).on("deselected.rs.jquery.bootgrid", function(e, arr) {
+
+            //    var found = y.some(function (el) {
+            //        return el === arr[0].id;
+            //    });
+            //    if (found) {
+            //        var index = y.indexOf(arr[0].id);
+            //        if (index > -1) {
+            //            y.splice(index, 1);
+            //        }
+            //    }
+            //});
+
+            $("#save").click(function() {
+                $("#PersonList").val($("#data-table-selection")
+                           .bootgrid("getSelectedRows"));
+            });
+        });
+    </script>
+
+    <style>
+        #treeview {
+            height: 340px;
+            padding: 10px;
+        }
+
+
+
+            #treeview .k-sprite {
+                background-image: url("../img/coloricons-sprite.png");
+            }
+
+        .rootfolder {
+            background-position: 0 0;
+        }
+
+        .folder {
+            background-position: 0 -16px;
+        }
+
+        .pdf {
+            background-position: 0 -32px;
+        }
+
+        .html {
+            background-position: 0 -48px;
+        }
+
+        .image {
+            background-position: 0 -64px;
+        }
+
+        .demo-section {
+            direction: ltr;
+        }
+
+        .my-table-responsive {
+            height: 475px;
+        }
+
+        .demo-section #treeview {
+            background-color: #f4f4f4;
+        }
+
+
+        /* RTL TreeView*/
+        #treeview {
+            direction: rtl;
+        }
+
+        .k-icon.k-minus, .k-icon.k-plus {
+            margin-left: 0;
+        }
+
+        .k-group > .k-item {
+            margin-right: 16px !important;
+        }
+
+            .k-group > .k-item.k-first.k-last {
+                margin-right: 0 !important;
+            }
+
+        .k-group .k-item .k-group {
+            margin-right: 16px;
+        }
+
+        .k-item.k-first.k-last .k-top {
+            margin-right: 0;
+        }
+
+        .k-treeview .k-sprite, .k-treeview .k-image {
+            margin-left: 5px;
+        }
+    </style>
+}
+
+

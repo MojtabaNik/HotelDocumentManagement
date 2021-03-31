@@ -1,0 +1,377 @@
+﻿@using Archive.ViewModel;
+@model AdvanceSearchViewModel
+@{
+    ViewBag.Title = "مشاهده نامه های ورودی و خروجی";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.rtl.min.css" rel="stylesheet" />
+    <style>
+        .fg-line:not(.disabled):after, .fg-line:not(.readonly):after {
+            z-index: 100 !important;
+        }
+    </style>
+}
+
+<div class="card-header">
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-xs-10">
+            <h2>
+                <small>جستجو در نامه های ورودی و خروجی</small>
+            </h2>
+        </div>
+    </div>
+</div>
+
+<table id="data-table-command" class="table table-striped table-vmiddle" style="direction:rtl; text-align:right;">
+    <thead>
+        <tr>
+            <th data-column-id="id" data-visible-in-selection="false" data-visible="false" data-identifier="true">شماره نامه</th>
+            <th data-column-id="RowNumber" data-order="asc">شماره نامه</th>
+            <th data-column-id="LetterType">نوع نامه</th>
+            <th data-column-id="LetterParentType" data-visible="false">نوع نامه</th>
+            <th data-column-id="sender">فرستنده</th>
+            <th data-column-id="received">پیرو نامه</th>
+            <th data-column-id="creationDate">تاریخ ایجاد</th>
+            <th data-column-id="description">شرح</th>
+            <th data-column-id="date">تاریخ نامه رسیده</th>
+            <th data-column-id="commands" data-searchable="false" data-formatter="commands" data-visible-in-selection="false" data-sortable="false"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ReceivedLetters)
+        {
+            <tr>
+                <td>@item.Id</td>
+                @if (item.RowNumber != null)
+                {
+                    <td>@item.RowNumber</td>
+                }
+
+                else
+                {
+                    <td>بدون شماره</td>
+                }
+                <td>ورودی</td>
+                <td>@ParentType.Receive</td>
+
+                @if (item.Sender != null)
+                {
+                    if (item.Sender.Organization != null)
+                    {
+                        if (item.Sender.Post != null)
+                        {
+                            if (item.Sender.Person != null)
+                            {
+                                <td>@item.Sender.Post.Name @item.Sender.Organization.GetFullOrganizationPath() @item.Sender.Person.FullName()</td>
+                            }
+                            else
+                            {
+                                <td>@item.Sender.Post.Name @item.Sender.Organization.GetFullOrganizationPath()</td>
+                            }
+                        }
+                        else
+                        {
+                            <td>@item.Sender.Organization.GetFullOrganizationPath()</td>
+                        }
+                    }
+                    else if (item.Sender.Person != null)
+                    {
+                        <td>@item.Sender.Person.FullName()</td>
+                    }
+                    else
+                    {
+                        <td>بدون صاحب</td>
+                    }
+
+                }
+                else
+                {
+                    <td>بدون صاحب</td>
+                }
+
+                <td>
+                    @if (item.ParentReceiveLetter != null || item.ParentSendLetterOut != null)
+                    {
+                        switch (item.ParentType)
+                        {
+                            case ParentType.Receive:
+                                <text>
+                                    @item.ParentReceiveLetter.RowNumber
+                                </text>
+                                break;
+                            case ParentType.Send:
+                                <text>
+                                    @item.ParentSendLetterOut.RowNumber
+                                </text>
+                                break;
+                            default:
+                                <text>
+                                    -
+                                </text>
+                                break;
+                        }
+
+                    }
+                    else
+                    {
+                        <text>
+                            -
+                        </text>
+                    }
+                </td>
+                @if (item.ArchiveDateTime != null)
+                {
+                    <td>@DBProvider.Utilities.ToPersianTime(item.ArchiveDateTime)</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                <td>@item.Description</td>
+
+                @if (item.LetterDateTime != null)
+                {
+                    <td>@DBProvider.Utilities.ToPersianTime(item.LetterDateTime)</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+            </tr>
+        }
+
+        @*logic of send letters*@
+        @foreach (var item in Model.SendLetters)
+        {
+            <tr>
+                <td>@item.Id</td>
+                @if (item.RowNumber != null)
+                {
+                    <td>@item.RowNumber</td>
+                }
+
+                else
+                {
+                    <td>بدون شماره</td>
+                }
+                <td>خروجی</td>
+                <td>@ParentType.Send</td>
+
+                @if (item.Recievers != null && item.Recievers.Count > 0)
+                {
+                    if (item.Recievers.First().Organization != null)
+                    {
+                        if (item.Recievers.First().Post != null)
+                        {
+                            if (item.Recievers.First().Person != null)
+                            {
+                                <td>@item.Recievers.First().Post.Name @item.Recievers.First().Organization.GetFullOrganizationPath() @item.Recievers.First().Person.FullName()</td>
+                            }
+                            else
+                            {
+                                <td>@item.Recievers.First().Post.Name @item.Recievers.First().Organization.GetFullOrganizationPath()</td>
+                            }
+                        }
+                        else
+                        {
+                            <td>@item.Recievers.First().Organization.GetFullOrganizationPath()</td>
+                        }
+                    }
+                    else if (item.Recievers.First().Person != null)
+                    {
+                        <td>@item.Recievers.First().Person.FullName()</td>
+                    }
+                    else
+                    {
+                        <td>بدون صاحب</td>
+                    }
+
+                }
+                else
+                {
+                    <td>بدون صاحب</td>
+                }
+
+                <td>
+                    @if (item.ParentReceivedLetterOut != null || item.ParentSendLetter != null)
+                    {
+                        switch (item.ParentType)
+                        {
+                            case ParentType.Receive:
+                                <text>
+                                    @item.ParentReceivedLetterOut.RowNumber
+                                </text>
+                                break;
+                            case ParentType.Send:
+                                <text>
+                                    @item.ParentSendLetter.RowNumber
+                                </text>
+                                break;
+                            default:
+                                <text>
+                                    -
+                                </text>
+                                break;
+                        }
+
+                    }
+                    else
+                    {
+                        <text>
+                            -
+                        </text>
+                    }
+                </td>
+                @if (item.ArchiveDateTime != null)
+                {
+                    <td>@DBProvider.Utilities.ToPersianTime(item.ArchiveDateTime)</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                <td>@item.Description</td>
+
+                @if (item.LetterDateTime != null)
+                {
+                    <td>@DBProvider.Utilities.ToPersianTime(item.LetterDateTime)</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+
+    <script src="~/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    <script src="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.all.min.js"></script>
+    <script src="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+    <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+    <script src="~/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+    <script src="~/js/purl.js"></script>
+
+    <!-- Data Table -->
+    <script type="text/javascript">
+        $(document)
+            .ready(function () {
+                //Command Buttons
+                $("#data-table-command")
+                    .bootgrid({
+                        css: {
+                            icon: 'zmdi icon',
+                            iconColumns: 'zmdi-view-module',
+                            iconDown: 'zmdi-expand-more',
+                            iconRefresh: 'zmdi-refresh',
+                            iconUp: 'zmdi-expand-less'
+                        },
+                        formatters: {
+                            "commands": function (column, row) {
+                                if (!$.url().param('showSelect')) {
+                                    if (row.LetterParentType === "Receive") {
+                                        return "<button type=\"button\" onClick='window.location = \"/IncomingLetters/DownloadLetterContent/" +
+                                            row.id +
+                                            "\"' class=\"btn btn-icon command-download waves-effect waves-circle\" data-row-id=\"" +
+                                            row.id +
+                                            "\"><span class=\"zmdi zmdi-download\"></span></button> " +
+                                            "<button type=\"button\" onClick='window.location = \"/IncomingLetters/Edit?ID=" +
+                                            row.id +
+                                            "\"' class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" +
+                                            row.id +
+                                            "\">" +
+                                            "<span class=\"zmdi zmdi-edit\"></span></button> ";
+                                        //+
+                                        //"<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" +
+                                        //row.id +
+                                        //"\">";
+                                        //"<span class=\"zmdi zmdi-eye\"></span></button>" +
+                                        //"<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" +
+                                        //row.id +
+                                        //"\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                                    } else {
+                                        return "<button type=\"button\" onClick='window.location = \"/OutgoingLetters/DownloadLetterContent/" +
+                                            row.id +
+                                            "\"' class=\"btn btn-icon command-download waves-effect waves-circle\" data-row-id=\"" +
+                                            row.id +
+                                            "\"><span class=\"zmdi zmdi-download\"></span></button> " +
+                                            "<button type=\"button\"  class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" +
+                                            row.id +
+                                            "\"><span class=\"zmdi zmdi-edit\"></span></button> ";
+                                        //+
+                                        //"<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" +
+                                        //row.id +
+                                        //"\">";
+                                        //  "<span class=\"zmdi zmdi-eye\"></span></button>" +
+                                        //"<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" +
+                                        //row.id +
+                                        //"\"><span class=\"zmdi zmdi-delete\"></span></button>";
+
+                                        //onClick = 'window.location = \"/OutgoingLetters/Edit?ID=" + row.id + "\"'
+                                    }
+
+                                } else {
+                                    if (row.id !== $.url().param('letterID'))
+                                        return "<button  onclick=\"$('.demotextbox1', window.parent.document).html('" +
+                                            row.RowNumber +
+                                            "');" +
+                                            "$('#ParentletterId', window.parent.document).val('" +
+                                            row.id +
+                                            "');" +
+                                            "$('#ParentType', window.parent.document).val('" +
+                                            row.LetterParentType +
+                                            "');" +
+                                            "$('.b-modal',window.parent.document).click();  $('#removeParent',window.parent.document).fadeIn();\" type=\"button\" class=\"btn btn-icon command-select waves-effect waves-circle\" data-row-id=\"" +
+                                            row.id +
+                                            "\"><span class=\"zmdi zmdi-eye\"></span></button> ";
+                                }
+                            }
+                        },
+                        labels: {
+                            noResults: "!!هیچ موردی یافت نشد",
+                            infos: "نمایش {{ctx.start}} تا {{ctx.end}} از {{ctx.total}}",
+                            search: "جستجو",
+                            all: "نمایش همه"
+                        }
+                    })
+                    .on("loaded.rs.jquery.bootgrid",
+                        function () {
+                            //$("button.command-edit")
+                            //    .click(function() {
+                            //        window.location = "/IncomingLetters/Edit?ID=" + $(this).data("row-id");
+                            //    });
+                        });
+
+                //Make Header and right menu Hidden
+                if ($.url().param('showSelect')) {
+                    $("#header").css({ 'display': 'none' });
+                    $("#main").css({ 'padding-top': '30px' });
+                }
+
+            });
+    </script>
+
+}

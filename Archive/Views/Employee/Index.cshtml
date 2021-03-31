@@ -1,0 +1,130 @@
+﻿@using Archive.ViewModel;
+@using DBProvider;
+@model EmployeeViewModel
+
+@{
+    ViewBag.Title = "مشاهده کارمندان";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+}
+
+
+<div class="card-header">
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-xs-10">
+            <h2>
+                <small>جستجوی کارمندان</small>
+            </h2>
+        </div>
+        <div class="col-xs-2">
+            <button class="btn bgm-red waves-effect">افزودن کارمند جدید</button>
+        </div>
+    </div>
+</div>
+
+<table id="data-table-command" class="table table-striped table-vmiddle" data-align="right">
+    <thead>
+        <tr>
+            <th data-column-id="id" data-identifier="true" data-order="asc" data-visible="false">شماره کاربر</th>
+            <th data-column-id="sender">نام و نام خانوادگی</th>
+            <th data-column-id="received">شماره همراه</th>
+            <th data-column-id="date">تاریخ تولد</th>
+            <th data-column-id="description">آدرس</th>
+            <th data-column-id="commands" data-formatter="commands" data-searchable="false" data-visible-in-selection="false" data-sortable="false"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Employees)
+        {
+            <tr>
+                <td>@item.Id</td>
+
+                <td>
+
+                    @item.FullName()
+
+                </td>
+
+
+
+
+                @*<td>@{item.ParentReceiveLetter != null ? item.ParentReceiveLetter.Id : 0}</td>*@
+                <td>
+                    @item.MobileNumber
+                </td>
+                @if (item.BirthDay != null)
+                {
+                    <td>@Utilities.ToPersianTime((DateTime)item.BirthDay) </td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                <td>@item.Address</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+
+    <script src="~/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    <script src="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.all.min.js"></script>
+    <script src="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+    <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+    <script src="~/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+
+    <!-- Data Table -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Command Buttons
+            $("#data-table-command").bootgrid({
+                css: {
+                    icon: 'zmdi icon',
+                    iconColumns: 'zmdi-view-module',
+                    iconDown: 'zmdi-expand-more',
+                    iconRefresh: 'zmdi-refresh',
+                    iconUp: 'zmdi-expand-less'
+                },
+                formatters: {
+                    "commands": function (column, row) {
+                        return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> " +
+                            "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-eye\"></span></button>" +
+                            "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                    }
+                },
+                labels: {
+                    noResults: "!!هیچ موردی یافت نشد",
+                    infos: "نمایش {{ctx.start}} تا {{ctx.end}} از {{ctx.total}}",
+                    search: "جستجو",
+                    all: "نمایش همه"
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+
+                $("button.command-edit").click(function () {
+                    window.location = "/Employee/Edit/" + $(this).data("row-id");
+                });
+            });
+
+
+
+        });
+    </script>
+}
+

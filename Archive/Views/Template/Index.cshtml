@@ -1,0 +1,67 @@
+﻿@using Archive.ViewModel;
+@model TemplateViewModel
+
+@{
+    ViewBag.Title = "مشاهده قالب نامه ها";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.rtl.min.css" rel="stylesheet" />
+    <link href="~/vendors/bower_components/lightgallery/light-gallery/css/lightGallery.css" rel="stylesheet">
+}
+
+<div class="card-header">
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-xs-2">
+            <a href="~/Template/Add" class="btn bgm-red waves-effect">افزودن قالب جدید</a>
+        </div>
+    </div>
+    <div class="card">
+
+        <div class="card-body card-padding">
+            <div class="row">
+                @foreach (var item in Model.Templates)
+                {
+                    <div class="col-sm-2 col-xs-6">
+                        <div class="row card-header text-center">
+                            @item.Name
+                        </div>
+                        <div class="row lightbox">
+                            <div data-src="@item.Content" class="col-sm-12 col-xs-12">
+
+                                <div class="lightbox-item">
+                                    <img src="@item.Content" alt="" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <a href="~/Template/Edit/@item.Id" class="btn bgm-blue btn-sm waves-effect">ویرایش</a>
+                            </div>
+                            <div class="col-sm-6">
+                                <a href="~/Template/Delete/@item.Id" class="btn bgm-red btn-sm waves-effect">حذف</a>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="@Url.Content("~/vendors/bower_components/lightgallery/light-gallery/js/lightGallery.min.js")"></script>
+}

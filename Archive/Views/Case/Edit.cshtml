@@ -1,0 +1,261 @@
+﻿@using Archive.ViewModel;
+@using DBProvider
+@model CaseViewModel
+
+@{
+    ViewBag.Title = "ویرایش ‍‍پرونده";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+
+
+}
+@section HeadCss{
+    <style>
+        .fileinput .thumbnail {
+            right: -40px;
+        }
+    </style>
+    <style>
+        g {
+            cursor: pointer;
+        }
+
+        .node circle {
+            fill: #fff !important;
+            stroke: steelblue;
+            stroke-width: 3px;
+        }
+
+        g text {
+            font: 25px IRANSans !important;
+            display: block;
+            margin: 0 auto;
+            /*direction: ltr;*/
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+        }
+
+        html {
+            overflow-x: hidden;
+        }
+    </style>
+
+    <link href="~/Content/getorgchart.css" rel="stylesheet" />
+}
+
+
+<form action="~/Case/Edit" method="post">
+    @*@Html.AntiForgeryToken()*@
+    <input name="CaseID" type="hidden" value="@Model.SelectedCase.Id" />
+    <div class="row m-t-25 p-0 m-b-25">
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                <div class="fg-line">
+                    <input id="CaseName" name="Name" type="text" class="form-control" value="@Model.SelectedCase.Name">
+                    <label class="fg-label">نام سازمان </label>
+                </div>
+            </div>
+        </div>
+        @*<div class="col-sm-4">
+                <div class="input-group fg-float">
+                    <span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+                    <div class="fg-line">
+                        <input name="ParentName" type="text" class="form-control">
+                        <label class="fg-label">نام سازمان والد </label>
+                    </div>
+                </div>
+            </div>*@
+        <div class="col-xs-4">
+            <select name="ParentCaseGUID" class="selectpicker" data-live-search="true" data-none-selected-text="هیچ گزینه ای انتخاب نشده است" data-no-results-matched="هیچ سازمانی یافت نشد">
+                @foreach (var Case in Model.Case)
+                {
+                    if (Case.Id == Model.SelectedCaseParent.Id)
+                    {
+                        <option selected="selected" value="@Case.Id">@Case.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@Case.Id">@Case.Name</option>
+                    }
+
+                }
+            </select>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="input-group fg-float">
+                <span class="input-group-addon"></span>
+                <div class="fg-line">
+
+                    <button type="submit" class="btn bgm-red btn-lg waves-effect">ویرایش</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@*<form action="~/Case/Add" method="post" enctype="multipart/form-data">
+
+    </form>*@
+
+
+
+
+
+@section Scripts{
+
+
+    @*<script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+        <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>*@
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+    <script src="~/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+
+
+
+
+}
+
+@section OurScripts{
+
+
+    <script>
+        $(function () {
+            $("#sendForm")
+                .click(function () {
+                    $("#Summary").val(htmlEncode($(".note-editable").html()));
+                    return true;
+                });
+        });
+
+        function htmlEncode(value) {
+            return $('<div/>').text(value).html();
+        }
+
+
+    </script>
+
+
+    <script src="~/js/getorgchart.js"></script>
+    <script src="~/js/jquery.mousewheel.js"></script>
+
+
+    <script type="text/javascript">
+        $("#people").getOrgChart({
+            // themes:annabel,belinda,cassandra,deborah,lena,monica,eve,vivian,helen
+            theme: "annabel",
+            color: "lightblue",
+            editable: false,
+            gridView: false,
+            orientation: getOrgChart.RO_TOP,
+            //color: "darkblue",
+            // این کد برای وارد شدن به صفحه ویرایش است
+            clickEvent: function (sender, args) {
+                //window.location = '/views/admin/EditRole.aspx' + '?RoleID=' + args.id;
+                return false;
+            },
+            primaryColumns: ["name", "recieved", "send"],
+            //این برای نوع خطوط هست دو نوع هست M,B
+            linkType: "B",
+            // load data from html table
+            dataSource: document.getElementById("orgChartData"),
+
+        });
+
+        //$("#people").getOrgChart("zoom", 1, true);
+    </script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $(".get-add").attr("href", "AddRole.aspx").click(function () {
+                $("body").html("");
+            });
+
+            var isCtrl = false;
+
+            $(".get-oc-c svg").mousemove(function () {
+                $("#people").focus().keydown(function (e) {
+                    if (e.which === 17) {
+                        isCtrl = e.type === 'keydown' ? true : false;
+                    }
+                }).keyup(function (e) {
+                    if (e.which === 17) {
+                        isCtrl = e.type === 'keydown' ? true : false;
+                    }
+                });
+            });
+
+            //KeyDown
+            $(".get-oc-c svg").mousewheel(function (e) {
+                if (isCtrl) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+
+
+            //make mouse pointer
+            $(".get-oc-c svg g").mouseover(function () {
+                $(this).css({ "cursor": "pointer" });
+            });
+
+
+            $("#organizationName").focus();
+
+        });
+
+
+        $(document).ready(function () {
+            //Command Buttons
+            $("#data-table-command").bootgrid({
+                css: {
+                    icon: 'zmdi icon',
+                    iconColumns: 'zmdi-view-module',
+                    iconDown: 'zmdi-expand-more',
+                    iconRefresh: 'zmdi-refresh',
+                    iconUp: 'zmdi-expand-less'
+                },
+                formatters: {
+                    "commands": function (column, row) {
+                        return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> " +
+                            "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                    }
+                },
+                labels: {
+                    noResults: "!!هیچ موردی یافت نشد",
+                    infos: "نمایش {{ctx.start}} تا {{ctx.end}} از {{ctx.total}}",
+                    search: "جستجو",
+                    all: "نمایش همه"
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+
+                $("button.command-edit").click(function () {
+                    window.location = "/Organization/Edit/" + $(this).data("row-id");
+                });
+            });
+
+
+
+        });
+    </script>
+}
+
+

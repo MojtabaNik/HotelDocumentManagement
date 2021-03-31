@@ -1,0 +1,232 @@
+﻿@using Archive.ViewModel;
+@model IncomingLettersViewModel
+@{
+    ViewBag.Title = "مشاهده نامه های ورودی";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/bootstrap-select/dist/css/bootstrap-select.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.min.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="~/vendors/farbtastic/farbtastic.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/chosen/chosen.min.css" rel="stylesheet">
+    <link href="~/vendors/summernote/dist/summernote.css" rel="stylesheet">
+    <link href="~/css/KendoUI/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/css/KendoUI/kendo.rtl.min.css" rel="stylesheet" />
+}
+
+
+@section SideBar{
+    <aside id="sidebar" class="sidebar c-overflow">
+        <div class="profile-menu">
+            <a href="#">
+                <div class="profile-pic">
+                    <img src="~/img/profile-pics/2.jpg" alt="">
+                </div>
+
+                <div class="profile-info">
+                    مجتبی نیکونژاد
+
+                    <i class="zmdi zmdi-caret-down"></i>
+                </div>
+            </a>
+
+            <ul class="main-menu">
+                <li>
+                    <a href="#"><i class="zmdi zmdi-account"></i>مشاهده پروفایل</a>
+                </li>
+                <li>
+                    <a href="#"><i class="zmdi zmdi-input-antenna"></i>تنظیمات حریم شخصی</a>
+                </li>
+                <li>
+                    <a href="#"><i class="zmdi zmdi-settings"></i>تنظیمات</a>
+                </li>
+                <li>
+                    <a href="~/Login"><i class="zmdi zmdi-time-restore"></i>خروج</a>
+                </li>
+            </ul>
+        </div>
+
+        <ul class="main-menu">
+            <li>
+                <a href="~/Dashboard"><i class="zmdi zmdi-home"></i>داشبورد</a>
+            </li>
+            <li class="sub-menu active toggled">
+                <a href="#"><i class="zmdi zmdi-view-compact"></i>نامه های ورودی</a>
+
+                <ul>
+                    <li><a href="~/IncomingLetters/CreateNewLetter">بایگانی</a></li>
+                    <li><a class="active" href="~/IncomingLetters">مشاهده</a></li>
+                </ul>
+            </li>
+            <li class="sub-menu">
+                <a href="#"><i class="zmdi zmdi-format-underlined"></i>نامه های خروجی</a>
+                <ul>
+                    <li>
+                        <a href="~/OutgoingLetters/CreateNewLetter">ایجاد نامه</a>
+                    </li>
+                    <li>
+                        <a href="~/OutgoingLetters">مشاهده</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="sub-menu">
+                <a href="#"><i class="zmdi zmdi-widgets"></i>جستجوی نامه ها</a>
+
+                <ul>
+                    <li><a href="#">همه ی پارامترها</a></li>
+                    <li><a href="#">شماره پرونده</a></li>
+                    <li><a href="#">ورودی</a></li>
+                    <li><a href="#">خروجی</a></li>
+                </ul>
+            </li>
+            <li class="sub-menu">
+                <a href="#"><i class="zmdi zmdi-view-list"></i>دسته ها</a>
+                <ul>
+                    <li><a href="#">صاحبان نامه ها</a></li>
+                    <li><a href="#">دسته بندی ها</a></li>
+                </ul>
+            </li>
+            <li class="sub-menu">
+                <a href="#"><i class="zmdi zmdi-view-list"></i>مدیریت کاربران</a>
+                <ul>
+                    <li><a href="~/User/Add">افزودن کاربر</a></li>
+                    <li><a href="~/User">مشاهده کاربران</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#"><i class="zmdi zmdi-swap-alt"></i>پروفایل</a>
+            </li>
+            <li>
+                <a href="#"><i class="zmdi zmdi-trending-up"></i>تنظیمات</a>
+            </li>
+            <li><a href="#"><i class="zmdi zmdi-calendar"></i>درباره</a></li>
+            <li>
+                <a href="~/Login"><i class="zmdi zmdi-time-restore"></i>خروج</a>
+            </li>
+        </ul>
+    </aside>
+}
+
+<div class="card-header">
+    <h2><small>شما می توانید در قسمت زیر بر روی هر فیلدی که می خواهید جستجو نمایید</small></h2>
+</div>
+
+<table id="data-table-command" class="table table-striped table-vmiddle" style="direction:rtl; text-align:right;">
+    <thead>
+        <tr>
+<<<<<<< HEAD
+            <th data-column-id="id">شماره نامه</th>
+=======
+            <th data-column-id="id" data-identifier="true" data-order="asc" data-type="numeric">شماره نامه</th>
+>>>>>>> 773493dd5eb2756e739376c6f3054fb15ae67a45
+            <th data-column-id="sender">صاحب نامه</th>
+            <th data-column-id="received">شماره پدر</th>
+            <th data-column-id="date">تاریخ ایجاد</th>
+            <th data-column-id="description">شرح</th>
+            <th data-column-id="date">تاریخ نامه رسیده</th>
+            <th data-column-id="commands" data-searchable="false" data-formatter="commands" data-visible-in-selection="false"  data-sortable="false"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ListReciveLetters)
+        {
+            <tr>
+                <td>@item.Id</td>
+
+                @*<td>@{item.ParentReceiveLetter != null ? item.ParentReceiveLetter.Id : 0}</td>*@
+                <td>
+                    @if (item.ParentReceiveLetter != null)
+                    {
+                        <text>
+                            @item.ParentReceiveLetter.Id
+                        </text>
+                    }
+                    else
+                    {
+                        <text>
+                            بدون والد
+                        </text>
+                    }
+                </td>
+                @if (item.ArchiveDateTime != null)
+                {
+                    <td>@DBProvider.Utilities.ToPersianTime(item.ArchiveDateTime)</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+
+
+                <td>@item.Description</td>
+
+                @if (item.LetterDateTime != null)
+                {
+                    <td>@DBProvider.Utilities.ToPersianTime((DateTime)item.LetterDateTime)</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+
+    <script src="~/vendors/bower_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    <script src="~/vendors/bower_components/nouislider/distribute/jquery.nouislider.all.min.js"></script>
+    <script src="~/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/vendors/bower_components/typeahead.js/dist/typeahead.bundle.min.js"></script>
+    <script src="~/vendors/summernote/dist/summernote-updated.min.js"></script>
+
+
+    <script src="~/vendors/bower_components/chosen/chosen.jquery.min.js"></script>
+    <script src="~/vendors/fileinput/fileinput.min.js"></script>
+    <script src="~/vendors/input-mask/input-mask.min.js"></script>
+    <script src="~/vendors/farbtastic/farbtastic.min.js"></script>
+
+    <script src="~/vendors/bootgrid/jquery.bootgrid.updated.min.js"></script>
+
+    <!-- Data Table -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Command Buttons
+            $("#data-table-command").bootgrid({
+                css: {
+                    icon: 'zmdi icon',
+                    iconColumns: 'zmdi-view-module',
+                    iconDown: 'zmdi-expand-more',
+                    iconRefresh: 'zmdi-refresh',
+                    iconUp: 'zmdi-expand-less'
+                },
+                formatters: {
+                    "commands": function (column, row) {
+                        return "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-download\"></span></button> " +
+                            "<button type=\"button\" class=\"btn btn-icon command-edit waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-edit\"></span></button> " +
+                            "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-eye\"></span></button>" +
+                            "<button type=\"button\" class=\"btn btn-icon command-delete waves-effect waves-circle\" data-row-id=\"" + row.id + "\"><span class=\"zmdi zmdi-delete\"></span></button>";
+                    }
+                },
+                labels: {
+                    noResults: "!!هیچ موردی یافت نشد",
+                    infos: "نمایش {{ctx.start}} تا {{ctx.end}} از {{ctx.total}}",
+                    search: "جستجو",
+                    all:"نمایش همه"
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+                $("body").persiaNumber();
+
+                $("button.command-edit").click(function () {
+                    window.location = "/User/Edit/" + $(this).data("row-id");
+                });
+            });
+        });
+    </script>
+}

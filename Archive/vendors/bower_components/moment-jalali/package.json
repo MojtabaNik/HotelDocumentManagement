@@ -1,0 +1,92 @@
+{
+  "_args": [
+    [
+      "moment-jalali",
+      "C:\\Users\\m0jta\\Desktop\\HotelArchiveSystem\\Archive"
+    ]
+  ],
+  "_from": "moment-jalali@latest",
+  "_id": "moment-jalali@0.3.9",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/moment-jalali",
+  "_nodeVersion": "4.2.3",
+  "_npmUser": {
+    "email": "ilxxxanlar@gmail.com",
+    "name": "ilxanlar"
+  },
+  "_npmVersion": "3.5.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "name": "moment-jalali",
+    "raw": "moment-jalali",
+    "rawSpec": "",
+    "scope": null,
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/moment-jalali/-/moment-jalali-0.3.9.tgz",
+  "_shasum": "d50be249553b514de3f1a23edcf03d7e7b610cda",
+  "_shrinkwrap": null,
+  "_spec": "moment-jalali",
+  "_where": "C:\\Users\\m0jta\\Desktop\\HotelArchiveSystem\\Archive",
+  "author": {
+    "email": "behrangn@gmail.com",
+    "name": "Behrang Noruzi Niya"
+  },
+  "bugs": {
+    "url": "https://github.com/ilxanlar/moment-jalaali/issues"
+  },
+  "dependencies": {
+    "jalaali-js": "^0.2.0",
+    "moment": "^2.9.0"
+  },
+  "description": "Jalaali (Jalali, Persian, Khorshidi, Shamsi) calendar system plugin for moment.js.",
+  "devDependencies": {
+    "bower": "^1.4.1",
+    "chai": "^2.2.0",
+    "component": "^1.1.0",
+    "eslint": "^0.18.0",
+    "mocha": "^2.2.1"
+  },
+  "directories": {},
+  "dist": {
+    "shasum": "d50be249553b514de3f1a23edcf03d7e7b610cda",
+    "tarball": "https://registry.npmjs.org/moment-jalali/-/moment-jalali-0.3.9.tgz"
+  },
+  "gitHead": "4994699e25978c77df3f9f80e9f97b3f41849924",
+  "homepage": "https://github.com/ilxanlar/moment-jalaali",
+  "keywords": [
+    "jalaali",
+    "jalali",
+    "persian",
+    "khorshidi",
+    "shamsi",
+    "date",
+    "calendar",
+    "conversion",
+    "convert"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "email": "ilxxxanlar@gmail.com",
+      "name": "ilxanlar"
+    }
+  ],
+  "name": "moment-jalali",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ilxanlar/moment-jalaali.git"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "version": "0.3.9"
+}

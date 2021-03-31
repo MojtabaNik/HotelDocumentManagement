@@ -1,0 +1,670 @@
+﻿@using Archive.ViewModel;
+@model DashboardViewModel
+@{
+    ViewBag.Title = "داشبورد";
+}
+
+@section BowerComponents{
+    <link href="~/vendors/bower_components/lightgallery/light-gallery/css/lightGallery.css" rel="stylesheet">
+    <link href="~/vendors/bower_components/fullcalendar/dist/fullcalendar.min.css" rel="stylesheet">
+}
+
+<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <img src="~/media/carousel/1.jpg" alt="">
+            <div class="carousel-caption">
+                <h3>اولین متن اسلاید</h3>
+                <p>یک متن نمونه جایگزین خواهد شد.</p>
+            </div>
+        </div>
+        <div class="item">
+            <img src="~/media/carousel/2.jpg" alt="">
+        </div>
+        <div class="item">
+            <img src="~/media/carousel/3.jpg" alt="">
+        </div>
+        <div class="item">
+            <img src="~/media/carousel/4.jpg" alt="">
+        </div>
+        <div class="item">
+            <img src="~/media/carousel/5.jpg" alt="">
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+        <span class="zmdi zmdi-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">قبلی</span>
+    </a>
+    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+        <span class="zmdi zmdi-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">بعدی</span>
+    </a>
+</div>
+<hr>
+<div class="row m-t-25 p-0 m-b-25">
+    <div class="col-xs-3">
+        <div class="bgm-amber brd-2 p-15">
+            <div class="c-white m-b-5">تعداد کل نامه ها</div>
+            <h2 class="m-0 c-white f-300">@Model.CountOfLetters</h2>
+        </div>
+    </div>
+
+    <div class="col-xs-3">
+        <div class="bgm-blue brd-2 p-15">
+            <div class="c-white m-b-5">تعداد نامه های ورودی</div>
+            <h2 class="m-0 c-white f-300">@Model.CountOfReceiveLetter</h2>
+        </div>
+    </div>
+
+    <div class="col-xs-3">
+        <div class="bgm-green brd-2 p-15">
+            <div class="c-white m-b-5">تعداد نامه های خروجی</div>
+            <h2 class="m-0 c-white f-300">@Model.CountOfSendLetter</h2>
+        </div>
+    </div>
+
+    <div class="col-xs-3">
+        <div class="bgm-red brd-2 p-15">
+            <div class="c-white m-b-5">تعداد کاربران</div>
+            <h2 class="m-0 c-white f-300">@Model.CountOfUser</h2>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row m-t-25 p-0 m-b-25">
+    <div class="col-xs-5">
+        <span style="margin-left: 10px; font-size: 18px">افزودن نامه خروجی</span>
+        <button id="AddOutgoingLetter" class="btn bgm-deeporange btn-icon waves-effect waves-circle waves-float"><i class="zmdi zmdi-plus"></i></button>
+    </div>
+    <div class="col-xs-5">
+        <span style="margin-left: 10px; font-size: 18px">افزودن نامه ورودی</span>
+        <button id="AddIncomingLetter" class="btn bgm-deeporange btn-icon waves-effect waves-circle waves-float"><i class="zmdi zmdi-plus"></i></button>
+    </div>
+</div>
+<hr />
+<div class="card-header">
+    <h2>آخرین رویدادها <small>در این قسمت تمام رویداد ها قرار خواهد گرفت.</small></h2>
+</div>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>نام</th>
+                <th>تاریخ</th>
+                <th>رویداد</th>
+                <th>توضیحات</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{
+                if (Model.activityLog != null)
+                {
+                    foreach (var item in Model.activityLog)
+                    {
+                        <tr class=@item.GetClass()>
+                            <td>@item.User?.FullName()</td>
+                            <td>@item.TimeStamp</td>
+                            <td>@item.Action</td>
+                            <td>@item.Description</td>
+                        </tr>
+                    }
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+<hr>
+<div class="row m-t-25 p-0 m-b-25">
+    <div class="col-xs-12">
+        <div class="lv-header-alt clearfix">
+            <h2 class="lvh-label hidden-xs">آخرین تغییرات نامه ها</h2>
+        </div>
+
+        <div class="card-body card-padding">
+            <div class="p-timeline">
+                <div class="pt-line c-gray text-right">
+                    <span class="d-block">1395</span>05/08
+                </div>
+
+                <div class="pt-body">
+                    <h2 class="ptb-title">نامه های ورودی</h2>
+
+                    <div class="lightbox clearfix">
+                        <div data-src="@Url.Content("~/media/gallery/1.jpg")">
+                            <div class="lightbox-item">
+                                <img src="~/media/gallery/thumbs/1.jpg" alt="" />
+                            </div>
+                        </div>
+
+                        <div data-src="@Url.Content("~/media/gallery/2.jpg")">
+                            <div class="lightbox-item">
+                                <img src="~/media/gallery/thumbs/2.jpg" alt="" />
+                            </div>
+                        </div>
+
+                        <div data-src="@Url.Content("~/media/gallery/3.jpg")">
+                            <div class="lightbox-item p-item">
+                                <img src="~/media/gallery/thumbs/3.jpg" alt="" />
+                            </div>
+                        </div>
+
+                        <div data-src="@Url.Content("~/media/gallery/4.jpg")">
+                            <div class="lightbox-item p-item">
+                                <img src="~/media/gallery/thumbs/4.jpg" alt="" />
+                            </div>
+                        </div>                                                            
+                    </div>
+                </div>
+
+            </div>
+            <div class="p-timeline">
+                <div class="pt-line c-gray text-right">
+                    <span class="d-block">1395</span>10/07
+                </div>
+
+                <div class="pt-body">
+                    <h2 class="ptb-title">نامه های خروجی</h2>
+
+                    <div class="lightbox clearfix">
+                        <div data-src="@Url.Content("~/media/gallery/10.jpg")">
+                            <div class="lightbox-item p-item">
+                                <img src="~/media/gallery/thumbs/10.jpg" alt="" />
+                            </div>
+                        </div>
+                        <div data-src="@Url.Content("~/media/gallery/11.jpg")">
+                            <div class="lightbox-item p-item">
+                                <img src="~/media/gallery/thumbs/11.jpg" alt="" />
+                            </div>
+                        </div>
+                        <div data-src="@Url.Content("~/media/gallery/12.jpg")">
+                            <div class="lightbox-item p-item">
+                                <img src="~/media/gallery/thumbs/12.jpg" alt="" />
+                            </div>
+                        </div>
+                        <div data-src="@Url.Content("~/media/gallery/13.jpg")">
+                            <div class="lightbox-item p-item">
+                                <img src="~/media/gallery/thumbs/13.jpg" alt="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="load-more" style="margin-top:-40px">
+            <button class="btn bgm-green waves-effect">نمایش همه</button>
+        </div>
+    </div>
+</div>
+
+<hr>
+<!-- Todo Lists -->
+<div class="row m-t-25 p-0 m-b-25">
+    <div class="col-xs-6">
+        <div id="todo-lists">
+            <div class="tl-header">
+                <h2>لیست انجام کارها</h2>
+                <small>فعالیت های خود را مدیریت نمایید</small>
+
+                <ul class="actions actions-alt">
+                    <li class="dropdown">
+                        <a href="" data-toggle="dropdown">
+                            <i class="zmdi zmdi-more-vert"></i>
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-left">
+                            <li>
+                                <a href="">تازه سازی</a>
+                            </li>
+                            <li>
+                                <a href="">مدیریت ابزارک</a>
+                            </li>
+                            <li>
+                                <a href="">تنظیمات ابزارک</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="tl-body">
+                <div id="add-tl-item">
+                    <i class="add-new-item zmdi zmdi-plus"></i>
+
+                    <div class="add-tl-body">
+                        <textarea placeholder="چه کاری می خواهید انجام دهید؟"></textarea>
+
+                        <div class="add-tl-actions">
+                            <a href="" data-tl-action="dismiss"><i class="zmdi zmdi-close"></i></a>
+                            <a href="" data-tl-action="save"><i class="zmdi zmdi-check"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkbox media">
+                    <div class="pull-left">
+                        <ul class="actions actions-alt">
+                            <li class="dropdown">
+                                <a href="" data-toggle="dropdown">
+                                    <i class="zmdi zmdi-more-vert"></i>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-left">
+                                    <li><a href="">حذف</a></li>
+                                    <li><a href="">بایگانی</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="media-body">
+                        <label>
+                            <input type="checkbox">
+                            <i class="input-helper"></i>
+                            <span>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="checkbox media">
+                    <div class="pull-left">
+                        <ul class="actions actions-alt">
+                            <li class="dropdown">
+                                <a href="" data-toggle="dropdown">
+                                    <i class="zmdi zmdi-more-vert"></i>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-left">
+                                    <li><a href="">حذف</a></li>
+                                    <li><a href="">بایگانی</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="media-body">
+                        <label>
+                            <input type="checkbox">
+                            <i class="input-helper"></i>
+                            <span>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم.</span>
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="checkbox media">
+                    <div class="pull-left">
+                        <ul class="actions actions-alt">
+                            <li class="dropdown">
+                                <a href="" data-toggle="dropdown">
+                                    <i class="zmdi zmdi-more-vert"></i>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-left">
+                                    <li><a href="">حذف</a></li>
+                                    <li><a href="">بایگانی</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="media-body">
+                        <label>
+                            <input type="checkbox">
+                            <i class="input-helper"></i>
+                            <span>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="checkbox media">
+                    <div class="pull-left">
+                        <ul class="actions actions-alt">
+                            <li class="dropdown">
+                                <a href="" data-toggle="dropdown">
+                                    <i class="zmdi zmdi-more-vert"></i>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-left">
+                                    <li><a href="">حذف</a></li>
+                                    <li><a href="">Archive</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="media-body">
+                        <label class="mojo-custom">
+                            <input type="checkbox">
+                            <i class="input-helper"></i>
+                            <span>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div id="calendar"></div>
+        <!-- Add event -->
+        <div class="modal fade" id="addNew-event" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">افزودن رویداد جدید</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="addEvent" role="form">
+                            <div class="form-group">
+                                <label for="eventName">نام رویداد</label>
+                                <div class="fg-line">
+                                    <input type="text" class="input-sm form-control" id="eventName" placeholder="مثال: قرار ملاقات">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="eventName">انتخاب رنگ</label>
+                                <div class="event-tag">
+                                    <span data-tag="bgm-teal" class="bgm-teal selected"></span>
+                                    <span data-tag="bgm-red" class="bgm-red"></span>
+                                    <span data-tag="bgm-pink" class="bgm-pink"></span>
+                                    <span data-tag="bgm-blue" class="bgm-blue"></span>
+                                    <span data-tag="bgm-lime" class="bgm-lime"></span>
+                                    <span data-tag="bgm-green" class="bgm-green"></span>
+                                    <span data-tag="bgm-cyan" class="bgm-cyan"></span>
+                                    <span data-tag="bgm-orange" class="bgm-orange"></span>
+                                    <span data-tag="bgm-purple" class="bgm-purple"></span>
+                                    <span data-tag="bgm-gray" class="bgm-gray"></span>
+                                    <span data-tag="bgm-black" class="bgm-black"></span>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="getStart" />
+                            <input type="hidden" id="getEnd" />
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-link" id="addEvent">افزودن رویداد</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">بستن صفحه</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+@section Scripts{
+    <script src="@Url.Content("~/vendors/bower_components/moment-jalali/build/moment-jalaali.js")"></script>
+    <script src="@Url.Content("~/vendors/bower_components/fullcalendar/dist/fullcalendar.min.js")"></script>
+    <script src="@Url.Content("~/vendors/bower_components/fullcalendar/dist/fa.js")"></script>
+    <script src="@Url.Content("~/vendors/bower_components/lightgallery/light-gallery/js/lightGallery.min.js")"></script>
+
+
+}
+
+@section OurScripts{
+    @*Calendar*@
+    <script type="text/javascript">
+
+        $(document)
+            .ready(function () {
+                var counter = 0;
+                var date = new Date();
+                var d = date.getDate();
+                var m = date.getMonth();
+                var y = date.getFullYear();
+
+                var cId = $('#calendar'); //Change the name if you want. I'm also using thsi add button for more actions
+
+                //Generate the Calendar
+                cId.fullCalendar({
+                    header: {
+                        right: '',
+                        center: 'prev, title, next',
+                        left: ''
+                    },
+                    lang: 'fa',
+                    isJalaali: true,
+                    isRTL: true,
+                    theme: true, //Do not remove this as it ruin the design
+                    selectable: true,
+                    selectHelper: true,
+                    editable: true,
+                    eventClick: function (calEvent, jsEvent, view) {
+                        //$('#addNew-event').modal('show');
+                        //alert('Event: ' + calEvent.title);
+                        //alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+                        //alert('View: ' + view.name);
+
+                        //// change the border color just for fun
+                        //$(this).css('border-color', 'red');
+                        //$('#calendar').fullCalendar('removeEventSource', calEvent.source);
+                        //alert("Event ID" + calEvent.source);
+
+                        swal({
+                            title: "آیا مطمئن هستید؟",
+                            text: "شما دیگر قادر به بازگردانی این رویداد نخواهید بود",
+                            type: "warning",
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "بله، حذف شود",
+                            showCancelButton: true,
+                            cancelButtonText: "خیر حذف نشود",
+                            closeOnConfirm: false
+                        },
+                            function () {
+                                swal("حذف گردید", "رویداد مورد نظر شما با موفقیت حذف گردید", "success");
+
+                                $('#calendar').fullCalendar('removeEvents', calEvent._id);
+                            });
+                        //alert(calEvent.id);
+
+                    },
+                    //Add Events
+                    events: [
+                        {
+                            title: 'Hangout with friends',
+                            start: new Date(y, m, 1),
+                            allDay: true,
+                            className: 'bgm-cyan'
+                        },
+                        {
+                            title: 'Meeting with client',
+                            start: new Date(y, m, 10),
+                            allDay: true,
+                            className: 'bgm-orange'
+                        },
+                        {
+                            title: 'Repeat Event',
+                            start: new Date(y, m, 18),
+                            allDay: true,
+                            className: 'bgm-amber'
+                        },
+                        {
+                            title: 'Semester Exam',
+                            start: new Date(y, m, 20),
+                            allDay: true,
+                            className: 'bgm-green'
+                        },
+                        {
+                            title: 'Soccor match',
+                            start: new Date(y, m, 5),
+                            allDay: true,
+                            className: 'bgm-lightblue'
+                        },
+                        {
+                            title: 'Coffee time',
+                            start: new Date(y, m, 21),
+                            allDay: true,
+                            className: 'bgm-orange'
+                        },
+                        {
+                            title: 'Job Interview',
+                            start: new Date(y, m, 5),
+                            allDay: true,
+                            className: 'bgm-amber'
+                        },
+                        {
+                            title: 'IT Meeting',
+                            start: new Date(y, m, 5),
+                            allDay: true,
+                            className: 'bgm-green'
+                        },
+                        {
+                            title: 'Brunch at Beach',
+                            start: new Date(y, m, 1),
+                            allDay: true,
+                            className: 'bgm-lightblue'
+                        },
+                        {
+                            title: 'Live TV Show',
+                            start: new Date(y, m, 15),
+                            allDay: true,
+                            className: 'bgm-cyan'
+                        },
+                        {
+                            title: 'Software Conference',
+                            start: new Date(y, m, 25),
+                            allDay: true,
+                            className: 'bgm-lightblue'
+                        },
+                        {
+                            title: 'Coffee time',
+                            start: new Date(y, m, 30),
+                            allDay: true,
+                            className: 'bgm-orange'
+                        },
+                        {
+                            title: 'Job Interview',
+                            start: new Date(y, m, 30),
+                            allDay: true,
+                            className: 'bgm-green'
+                        },
+                    ],
+
+
+                    eventRender: function (event, element) {
+                        if (event.id == undefined || event.id == 0)
+                            event.id = ++counter;
+                    },
+
+                    //On Day Select
+                    select: function (start, end, allDay) {
+                        $('#addNew-event').modal('show');
+                        $('#addNew-event input:text').val('');
+                        $('#getStart').val(start);
+                        $('#getEnd').val(end);
+                    }
+                });
+
+                //Create and ddd Action button with dropdown in Calendar header.
+                var actionMenu = '<ul class="actions actions-alt" id="fc-actions">' +
+                    '<li class="dropdown">' +
+                    '<a href="" data-toggle="dropdown"><i class="zmdi zmdi-more-vert"></i></a>' +
+                    '<ul class="dropdown-menu dropdown-menu-right">' +
+                    '<li class="active">' +
+                    '<a data-view="month" href="">Month View</a>' +
+                    '</li>' +
+                    '<li>' +
+                    '<a data-view="basicWeek" href="">Week View</a>' +
+                    '</li>' +
+                    '<li>' +
+                    '<a data-view="agendaWeek" href="">Agenda Week View</a>' +
+                    '</li>' +
+                    '<li>' +
+                    '<a data-view="basicDay" href="">Day View</a>' +
+                    '</li>' +
+                    '<li>' +
+                    '<a data-view="agendaDay" href="">Agenda Day View</a>' +
+                    '</li>' +
+                    '</ul>' +
+                    '</div>' +
+                    '</li>';
+
+
+                cId.find('.fc-toolbar').append(actionMenu);
+
+                //Event Tag Selector
+                (function () {
+                    $('body')
+                        .on('click',
+                            '.event-tag > span',
+                            function () {
+                                $('.event-tag > span').removeClass('selected');
+                                $(this).addClass('selected');
+                            });
+                })();
+
+                //Add new Event
+                $('body')
+                    .on('click',
+                        '#addEvent',
+                        function () {
+                            var eventName = $('#eventName').val();
+                            var tagColor = $('.event-tag > span.selected').attr('data-tag');
+
+                            if (eventName != '') {
+                                //Render Event
+                                $('#calendar')
+                                    .fullCalendar('renderEvent',
+                                        {
+                                            id: ++counter,
+                                            title: eventName,
+                                            start: $('#getStart').val(),
+                                            end: $('#getEnd').val(),
+                                            allDay: true,
+                                            className: tagColor
+
+                                        },
+                                        true); //Stick the event
+
+                                $('#addNew-event form')[0].reset()
+                                $('#addNew-event').modal('hide');
+                            } else {
+                                $('#eventName').closest('.form-group').addClass('has-error');
+                            }
+                        });
+
+                //Calendar views
+                $('body')
+                    .on('click',
+                        '#fc-actions [data-view]',
+                        function (e) {
+                            e.preventDefault();
+                            var dataView = $(this).attr('data-view');
+
+                            $('#fc-actions li').removeClass('active');
+                            $(this).parent().addClass('active');
+                            cId.fullCalendar('changeView', dataView);
+                        });
+
+
+                //Warning Message
+                $('#sa-warning')
+                    .click(function () {
+
+                    });
+                $("#AddIncomingLetter")
+                               .click(function () {
+                                   window.location = "/IncomingLetters/Add";
+                               });
+                $("#AddOutgoingLetter")
+                                            .click(function () {
+                                                window.location = "/OutgoingLetters/Add";
+                                            });
+
+            });
+
+    </script>
+}
+

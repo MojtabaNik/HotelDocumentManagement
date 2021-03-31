@@ -1,0 +1,259 @@
+﻿using DataAccessLayer;
+using DBProvider;
+using EntityModel;
+using System;
+using System.Collections.Generic;
+<<<<<<< HEAD
+using System.Drawing;
+=======
+>>>>>>> eb9fb7264594e75d5e0cc33922dbea53c2ed2389
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+<<<<<<< HEAD
+using Aspose.Pdf;
+using Document = Aspose.Words.Document;
+using SaveFormat = Aspose.Words.SaveFormat;
+=======
+using System.Web;
+>>>>>>> eb9fb7264594e75d5e0cc33922dbea53c2ed2389
+
+namespace BusinessModel
+{
+    public class ReceiveLetterManager:DBProvider<ReceivedLetter>
+    {
+        public ReceiveLetterManager():base(new DatabaseContext())
+        {
+        }
+        public void AddCases(ReceivedLetter receivedLetter, string selectedCasesGuidlist)
+        {
+            List<Guid> ListGuid = new List<Guid>();
+            List<string> GUIDS = new List<string>();
+
+            if (selectedCasesGuidlist.Contains(","))
+            {
+                GUIDS = selectedCasesGuidlist.Split(',').ToList();
+            }
+            else
+            {
+                GUIDS.Add(selectedCasesGuidlist);
+            }
+
+            foreach (var item in GUIDS)
+            {
+                Guid id = Guid.Parse(item);
+                ListGuid.Add(id);
+            }
+            receivedLetter.Cases = new List<Case>();
+            var caseDbset = DBC.Set<Case>();
+            foreach (var item in ListGuid)
+            {
+                receivedLetter.Cases.Add(caseDbset.FirstOrDefault(x => x.Id == item));
+            }
+        }
+        public void AddOrganization(ReceivedLetter receivedLetter, Guid? selectedOrganization)
+        {
+            var orgDBset = DBC.Set<Organization>();
+            receivedLetter.Organization = orgDBset.FirstOrDefault(x => x.Id == selectedOrganization);
+        }
+
+        public void AddPerson(ReceivedLetter receivedLetter, Guid? selectedPerson)
+        {
+            var perDBset = DBC.Set<Person>();
+            receivedLetter.Person = perDBset.FirstOrDefault(x => x.Id == selectedPerson);
+        }
+        public void AddUser(ReceivedLetter receivedLetter, Guid selectedUser)
+        {
+            var userDBset = DBC.Set<User>();
+            receivedLetter.User = userDBset.FirstOrDefault(x => x.Id == selectedUser);
+        }
+        public ReceivedLetter GetParent(Guid child)
+        {
+            var parent =
+                DBC.Database.SqlQuery<Guid>("SELECT ParentReceiveLetter_Id from ReceivedLetters where Id={0}", child)
+                    .FirstOrDefault<Guid>();
+
+            return Read(parent);
+        }
+
+<<<<<<< HEAD
+        public void GeneratePDF(ReceivedLetter receivedLetter)
+        {
+            MemoryStream stream = null;
+
+            if (receivedLetter.ReceiveLetterFiles != null &&
+                receivedLetter.ReceiveLetterFiles.Count > 0)
+            {
+                //Render Letter Content With Files
+                Aspose.Pdf.Document contentPdf = new Aspose.Pdf.Document();
+                foreach (var file in receivedLetter.ReceiveLetterFiles)
+                {
+                    if (file.File.ContentType.Contains("image"))
+                    {
+                        Aspose.Pdf.Page page = contentPdf.Pages.Add();
+                        Bitmap b = new Bitmap(new MemoryStream(file.File.Content));
+                        page.PageInfo.Width = b.Width;
+                        page.PageInfo.Height = b.Height;
+                        // Set margins so image will fit, etc.
+                        page.PageInfo.Margin.Bottom = 0;
+                        page.PageInfo.Margin.Top = 0;
+                        page.PageInfo.Margin.Left = 0;
+                        page.PageInfo.Margin.Right = 0;
+
+                        page.CropBox = new Aspose.Pdf.Rectangle(0, 0, b.Width, b.Height);
+
+                        Aspose.Pdf.Image image1 = new Aspose.Pdf.Image();
+                        // Add the image into paragraphs collection of the section
+                        page.Paragraphs.Add(image1);
+                        // Set the image file stream
+                        image1.ImageStream = new MemoryStream(file.File.Content);
+                    }
+                    else if (file.File.ContentType.Contains("pdf"))
+                    {
+                        //Append pdf to appendages
+                        Aspose.Pdf.Document thisPDF = new Aspose.Pdf.Document(new MemoryStream(file.File.Content));
+                        contentPdf.Pages.Add(thisPDF.Pages);
+                    }
+                    else if (file.File.ContentType.Contains("word"))
+                    {
+                        //Convert to pdf first
+                        Document thisDoc = new Document(new MemoryStream(file.File.Content));
+                        MemoryStream temp = new MemoryStream();
+                        thisDoc.Save(temp, SaveFormat.Pdf);
+                        //Second append it to appendages
+                        Aspose.Pdf.Document thisPDF = new Aspose.Pdf.Document(temp);
+                        contentPdf.Pages.Add(thisPDF.Pages);
+                    }
+                }
+                stream = new MemoryStream();
+                contentPdf.Save(stream);
+                receivedLetter.LetterFileContent = stream.ToArray();
+            }
+
+            //Debug
+            //Aspose.Pdf.Document letterFile = new Aspose.Pdf.Document(stream);
+            //letterFile.Save(Server.MapPath("~/LetterOnly.pdf"));
+
+
+            //Save letter with Appendage
+            if (receivedLetter.Appendages != null &&
+                receivedLetter.Appendages.Count > 0)
+            {
+                Aspose.Pdf.Document appendagePdf = new Aspose.Pdf.Document();
+                foreach (var file in receivedLetter.Appendages)
+                {
+                    if (file.File.ContentType.Contains("image"))
+                    {
+                        Page page = appendagePdf.Pages.Add();
+                        Bitmap b = new Bitmap(new MemoryStream(file.File.Content));
+                        page.PageInfo.Width = b.Width;
+                        page.PageInfo.Height = b.Height;
+                        // Set margins so image will fit, etc.
+                        page.PageInfo.Margin.Bottom = 0;
+                        page.PageInfo.Margin.Top = 0;
+                        page.PageInfo.Margin.Left = 0;
+                        page.PageInfo.Margin.Right = 0;
+
+                        page.CropBox = new Aspose.Pdf.Rectangle(0, 0, b.Width, b.Height);
+
+                        Aspose.Pdf.Image image1 = new Aspose.Pdf.Image();
+                        // Add the image into paragraphs collection of the section
+                        page.Paragraphs.Add(image1);
+                        // Set the image file stream
+                        image1.ImageStream = new MemoryStream(file.File.Content);
+                    }
+                    else if (file.File.ContentType.Contains("pdf"))
+                    {
+                        //Append pdf to appendages
+                        Aspose.Pdf.Document thisPDF = new Aspose.Pdf.Document(new MemoryStream(file.File.Content));
+                        appendagePdf.Pages.Add(thisPDF.Pages);
+                    }
+                    else if (file.File.ContentType.Contains("word"))
+                    {
+                        //Convert to pdf first
+                        Document thisDoc = new Document(new MemoryStream(file.File.Content));
+                        MemoryStream temp = new MemoryStream();
+                        thisDoc.Save(temp, SaveFormat.Pdf);
+                        //Second append it to appendages
+                        Aspose.Pdf.Document thisPDF = new Aspose.Pdf.Document(temp);
+                        appendagePdf.Pages.Add(thisPDF.Pages);
+                    }
+                }
+
+                //Return PDF from letter
+                if (stream != null)
+                {
+                    Aspose.Pdf.Document letterPdf = new Aspose.Pdf.Document(stream);
+
+                    stream = new MemoryStream();
+                    appendagePdf.Save(stream);
+                    receivedLetter.AppendageContent = stream.ToArray();
+                    //Debug
+                    //appendagePdf.Save(Server.MapPath("~/AppendagesOnly.pdf"));
+
+                    letterPdf.Pages.Add(appendagePdf.Pages);
+                    stream = new MemoryStream();
+                    letterPdf.Save(stream);
+                    //Debug
+                    //letterPdf.Save(Server.MapPath("~/letterWithAppendages.pdf"));
+
+                    receivedLetter.LetterFileAppendageContent = stream.ToArray();
+                }
+                else
+                {
+
+                    stream = new MemoryStream();
+                    appendagePdf.Save(stream);
+                    receivedLetter.AppendageContent = stream.ToArray();
+                    receivedLetter.LetterFileAppendageContent = stream.ToArray();
+                }
+            }
+=======
+
+        public void UpdateReceiveLetterFiles(ReceivedLetter parentReceiveletter, List<HttpPostedFileBase> fileUploadLetters)
+        {
+            List<ReceiveLetterFile> receiveLetterfiles = new List<ReceiveLetterFile>();
+           // parentReceiveletter.ReceiveLetterFiles.Clear();
+            receiveLetterfiles = DBC.Set<ReceiveLetterFile>().Where(x => x.ReceiveLetter.Id == parentReceiveletter.Id).ToList();
+
+                parentReceiveletter.ReceiveLetterFiles = new List<ReceiveLetterFile>();//
+                
+                foreach (var item in fileUploadLetters)
+                {
+                    int i = 0;
+                    if (item != null && item.ContentLength > 0)
+                    {
+                        var target = new MemoryStream();
+                        ReceiveLetterFile receiveLetterFile = new ReceiveLetterFile();
+                        item.InputStream.CopyTo(target);
+                        receiveLetterFile.File = new ArchiveFile
+                        {
+                            Content = target.ToArray(),
+                            Name = item.FileName,
+                            ContentType = item.ContentType
+                        };
+                        receiveLetterfiles.Add(receiveLetterFile);
+                    }
+                    //else if (deleted[i])
+                    //{
+                    //    receiveLetterfiles.RemoveAt(i);
+                    //}
+                    //else
+                    //{
+                    //    //editIncomingLettersViewModel.receivedLetter.ReceiveLetterFiles.Add(ImageFromBase64(editIncomingLettersViewModel.OlderFiles[i]));
+                    //    ReceiveLetterFile receiveLetterFile = new ReceiveLetterFile();
+                    //    receiveLetterFile.File = new ArchiveFile
+                    //    {
+                    //        Content = ImageFromBase64(editIncomingLettersViewModel.OlderFilesContent[i]),
+                    //        Name = editIncomingLettersViewModel.OlderFilesName[i],
+                    //        ContentType = "image/jpg"
+                    //    };
+                    //    editIncomingLettersViewModel.receivedLetter.ReceiveLetterFiles.Add(receiveLetterFile);
+                    //}
+                    i++;
+                }
+>>>>>>> eb9fb7264594e75d5e0cc33922dbea53c2ed2389
+        }
+    }
+}
